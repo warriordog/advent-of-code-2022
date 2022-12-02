@@ -11,8 +11,8 @@
 ### Solutions
 | Day                         | Part 1                                    | Part 2                                    | Name                | Arguments |
 |-----------------------------|-------------------------------------------|-------------------------------------------|---------------------|-----------|
-| [Day01](AdventOfCode/Day01) | [Part1](AdventOfCode/Day01/Day01Part1.cs) | [Part2](AdventOfCode/Day01/Day01Part2.cs) | Calorie Counting    | n/a       |
 | [Day02](AdventOfCode/Day02) | [Part1](AdventOfCode/Day02/Day02Part1.cs) | [Part2](AdventOfCode/Day02/Day02Part2.cs) | Rock Paper Scissors | n/a       |
+| [Day01](AdventOfCode/Day01) | [Part1](AdventOfCode/Day01/Day01Part1.cs) | [Part2](AdventOfCode/Day01/Day01Part2.cs) | Calorie Counting    | n/a       |
 
 ### Details
 * Dotnet 6 is required to run the solutions.
