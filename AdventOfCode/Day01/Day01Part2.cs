@@ -1,11 +1,9 @@
 namespace AdventOfCode.Day01;
 
-public static class Day01Part2
+public class Day01Part2 : Day01
 {
-    public static async Task Run(string[] args)
+    protected override void RunPart(IEnumerable<Elf> elves)
     {
-        var elves = await Day01.ParseInput();
-
         var max3Calories = elves
             .OrderByDescending(elf => elf.Calories)
             .Take(3)

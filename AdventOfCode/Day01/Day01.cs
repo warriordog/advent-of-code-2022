@@ -2,20 +2,21 @@ using AdventOfCode.Common;
 
 namespace AdventOfCode.Day01;
 
-public static class Day01
+public abstract class Day01 : ISolution
 {
-    public static async Task<List<Elf>> ParseInput()
+    public async Task Run(string inputFile, List<string> solutionArgs)
     {
-        var inputPath = "AdventOfCode/Day01/day1.txt";
-        var inputText = await File.ReadAllTextAsync(inputPath);
+        var inputText = await File.ReadAllTextAsync(inputFile);
         var elves = inputText
                 .SplitByTwoThenOneEOL()
                 .Select(chunk => chunk.Aggregate(0, (sum, line) => sum + int.Parse(line)))
                 .Select((calories, index) => new Elf(index + 1, calories))
-                .ToList()
             ;
-        return elves;
+        
+        RunPart(elves);
     }
+
+    protected abstract void RunPart(IEnumerable<Elf> elves);
 }
 
 public record Elf(int Number, int Calories);

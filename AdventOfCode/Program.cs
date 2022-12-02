@@ -7,35 +7,39 @@ public static class Program
 {
     public static async Task Main(string[] args)
     {
-        var (day, part) = args.Parse(
-            "day number", int.Parse,
-            "part number or name", a => a
-            );
+        var (dayName, partName) = args.Parse("day name/number", "part name/number");
+        var solutionArgs = args.Skip(2).ToList();
+        var solutionName = $"AdventOfCode.{dayName}.{dayName}{partName}";
+        var solutionFile = $"AdventOfCode/{dayName}/input.txt";
         
-        Console.WriteLine($"Running day {day} part {part}.");
-        await RunDayPart(day, part, args);
+        var solution = LoadSolution(solutionName);
+        
+        Console.WriteLine($"Running {solutionName}.");
+        await solution.Run(solutionFile, solutionArgs);
     }
 
-    private static async Task RunDayPart(int day, string part, string[] args)
+    private static ISolution LoadSolution(string solutionTypeName)
     {
-        if (day == 1) await RunDay1(part, args);
-        else UnknownDay(day);
-    }
+        var type = Type.GetType(solutionTypeName);
+        if (type == null)
+        {
+            Console.Error.WriteLine($"No solution found with name {solutionTypeName}");
+            throw new ArgumentException("Unable to load type for name", nameof(solutionTypeName));
+        }
 
-    private static async Task RunDay1(string part, string[] args)
-    {
-        if (part == "1") await Day01Part1.Run(args);
-        else if (part == "2") await Day01Part2.Run(args);
-        else UnknownPart(1, part);
-    }
+        if (!type.IsAssignableTo(typeof(ISolution)))
+        {
+            Console.Error.WriteLine($"No solution found with name {solutionTypeName}");
+            throw new ArgumentException("Type does not implement ISolution", nameof(solutionTypeName));
+        }
 
-    private static void UnknownDay(int day)
-    {
-        Console.Error.WriteLine($"Unknown day number: {day}");
-    }
+        var obj = Activator.CreateInstance(type);
+        if (obj is not ISolution solution)
+        {
+            Console.Error.WriteLine($"No solution found with name {solutionTypeName}");
+            throw new ApplicationException($"Could not create an instance of type {type.FullName}");
+        }
 
-    private static void UnknownPart(int day, string part)
-    {
-        Console.Error.WriteLine($"Unknown part \"{part}\" for day {day}");
+        return solution;
     }
 }
