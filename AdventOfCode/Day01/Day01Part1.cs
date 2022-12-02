@@ -5,9 +5,9 @@ namespace AdventOfCode.Day01;
 
 public class Day01Part1 : Day01
 {
-    protected override void RunPart(IEnumerable<Elf> elves)
+    protected override void RunPart(IEnumerable<int> calories)
     {
-        var elfWithMax = elves.MaxBy(elf => elf.Calories) ?? throw new ApplicationException("No elves were loaded from the input");
-        Log($"Elf {elfWithMax.Number} has the most calories at [{elfWithMax.Calories}].");
+        var maxCalories = calories.Max();
+        Log($"The max number of calories is [{maxCalories}].");
     }
 } 
