@@ -1,11 +1,15 @@
 # advent-of-code-2022
 
 ### Instructions
-* From Rider - Select a day/part from the Run Configurations dropdown and click Run.
-* From CLI - navigate to the solution root and execute `dotnet run --project AdventOfCode Day<number> Part<number>`
-  * Day/part numbers are case-sensitive. Day must be a two digits and part should be one digit. For example: `... Day01 Part1` would execute day 1 / part 1.
-* You can also run all solutions at once using `run_all.sh` or `run_all.bat`.
-  * Please be sure to run from the solution root directory, otherwise the paths will not resolve correctly.
+* To run a single solution:
+  * From Rider - Select a day/part from the Run Configurations dropdown and click Run.
+  * From CLI - navigate to the solution root and execute `dotnet run --project AdventOfCode Day<number> Part<number> [solution-specific arguments]`
+    * Day/part numbers are case-sensitive. Day must be a two digits and part should be one digit. For example: `... Day01 Part1` would execute day 1 / part 1.
+    * Any arguments after the part number will be passed on to the solution. See the "Arguments" column in the table below to see what arguments are supported.
+    * Please be sure to run from the solution root directory, otherwise the paths will not resolve correctly.
+* To run all solutions:
+  * From Rider - Select the `Run All` run configuration and click Run.
+  * From CLI - navigate to the solution root and execute `dotnet run --project AdventOfCode all`
 
 
 ### Solutions
@@ -17,7 +21,4 @@
 ### Details
 * Dotnet 6 is required to run the solutions.
 * Project files are included for JetBrains Rider, but the solution should work in Visual Studio or with the dotnet command line.
-* Solutions are executed via a [reflective loader](AdventOfCode/Program.cs).
-  * Day/part names are used to construct the type name, which is resolved to a type via reflection.
-  * Any extra parameters are passed on to the specific solution class.
 * Solutions should run on any supported .NET platform.

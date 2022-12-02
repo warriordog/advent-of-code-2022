@@ -1,43 +1,69 @@
 using AdventOfCode.Common;
 using AdventOfCode.Day01;
+using AdventOfCode.Day02;
 
 namespace AdventOfCode;
 
 public static class Program
 {
+    private static readonly Dictionary<string, Dictionary<string, Func<ISolution>>> SolutionMap = new()
+    {
+        { "Day01", new() {
+            { "Part1", () => new Day01Part1() },
+            { "Part2", () => new Day01Part2() }
+        }},
+        { "Day02", new() {
+            { "Part1", () => new Day02Part1() },
+            { "Part2", () => new Day02Part2() }
+        }}
+    };
+
     public static async Task Main(string[] args)
     {
-        var (dayName, partName) = args.Parse("day name/number", "part name/number");
-        var solutionArgs = args.Skip(2).ToList();
-        var solutionName = $"AdventOfCode.{dayName}.{dayName}{partName}";
-        var solutionFile = $"AdventOfCode/{dayName}/input.txt";
-        
-        var solution = LoadSolution(solutionName);
-        await solution.Run(solutionFile, solutionArgs);
+        if (args.Length == 1 && args[0].ToLower() == "all")
+        {
+            await RunAllSolutions();
+        }
+        else
+        {
+            await RunOneSolution(args);
+        }
     }
 
-    private static ISolution LoadSolution(string solutionTypeName)
+    private static async Task RunAllSolutions()
     {
-        var type = Type.GetType(solutionTypeName);
-        if (type == null)
+        foreach (var (day, partMap) in SolutionMap)
         {
-            Console.Error.WriteLine($"No solution found with name {solutionTypeName}");
-            throw new ArgumentException("Unable to load type for name", nameof(solutionTypeName));
+            foreach (var factory in partMap.Values)
+            {
+                await ExecuteSolution(day, factory, new List<string>());
+            }
         }
+    }
 
-        if (!type.IsAssignableTo(typeof(ISolution)))
+    private static async Task RunOneSolution(string[] args)
+    {
+        var (dayName, partName) = args.Parse("day name/number", "part name/number");
+        
+        if (!SolutionMap.TryGetValue(dayName, out var partMap))
         {
-            Console.Error.WriteLine($"No solution found with name {solutionTypeName}");
-            throw new ArgumentException("Type does not implement ISolution", nameof(solutionTypeName));
+            await Console.Error.WriteLineAsync($"Unknown day \"{dayName}\"");
+            throw new ApplicationException("Day was not found in SolutionMap");
         }
-
-        var obj = Activator.CreateInstance(type);
-        if (obj is not ISolution solution)
+        if (!partMap.TryGetValue(partName, out var factory))
         {
-            Console.Error.WriteLine($"No solution found with name {solutionTypeName}");
-            throw new ApplicationException($"Could not create an instance of type {type.FullName}");
+            await Console.Error.WriteLineAsync($"Unknown part \"{partName}\" for day \"{dayName}\"");
+            throw new ApplicationException("Part was not found in SolutionMap");
         }
+        
+        var solutionArgs = args.Skip(2).ToList();
+        await ExecuteSolution(dayName, factory, solutionArgs);
+    }
 
-        return solution;
+    private static async Task ExecuteSolution(string day, Func<ISolution> factory, List<string> args)
+    {
+        var inputFile = $"AdventOfCode/{day}/input.txt";
+        var solution = factory();
+        await solution.Run(inputFile, args);
     }
 }
