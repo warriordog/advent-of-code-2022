@@ -1,10 +1,11 @@
 # advent-of-code-2022
 
 ### Instructions
-To run, build the solution and pass in a day and part as arguments.
-This is case-sensitive and days must be two-digit numbers.
-Example: `dotnet AdventOfCode/bin/Debug/net6.0/AdventOfCode.dll Day01 Part1`.
-Please be sure to run from the solution root directory, otherwise the paths will not resolve correctly.
+* From Rider - Select a day/part from the Run Configurations dropdown and click Run.
+* From CLI - navigate to the solution root and execute `dotnet run --project AdventOfCode Day<number> Part<number>`
+  * Day/part numbers are case-sensitive. Day must be a two digits and part should be one digit. For example: `... Day01 Part1` would execute day 1 / part 1.
+  * Please be sure to run from the solution root directory, otherwise the paths will not resolve correctly.
+
 
 ### Solutions
 | Day                         | Part 1                                    | Part 2                                    | Name                | Arguments |
