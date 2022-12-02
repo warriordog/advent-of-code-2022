@@ -17,6 +17,7 @@ public abstract class Day01 : ISolution
     }
 
     protected abstract void RunPart(IEnumerable<Elf> elves);
+    protected void Log(string message) => Console.WriteLine($"[{GetType().Name}] {message}");
 }
 
 public record Elf(int Number, int Calories);

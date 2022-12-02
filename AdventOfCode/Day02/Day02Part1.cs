@@ -25,6 +25,6 @@ public class Day02Part1 : Day02
             });
         
         var totalScore = ComputeTotalScore(rounds);
-        Console.WriteLine($"[Day02 Part1] The total score from the strategy guide is [{totalScore}].");
+        Log($"The total score from the strategy guide is [{totalScore}].");
     }
 }

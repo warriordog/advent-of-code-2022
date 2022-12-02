@@ -9,7 +9,6 @@ public class Day01Part2 : Day01
             .Take(3)
             .Aggregate(0, (max, elf) => max + elf.Calories);
         
-     
-        Console.WriteLine($"The top 3 elves have a total of {max3Calories} calories.");   
+        Log($"The top 3 elves have a total of [{max3Calories}] calories.");
     }
 }

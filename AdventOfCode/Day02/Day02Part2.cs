@@ -29,7 +29,7 @@ public class Day02Part2 : Day02
         
         
         var totalScore = ComputeTotalScore(rounds);
-        Console.WriteLine($"[Day02 Part2] If everything goes according to the guide, then the total score will be [{totalScore}].");
+        Log($"If everything goes according to the guide, then the total score will be [{totalScore}].");
     }
 
     

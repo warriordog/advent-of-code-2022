@@ -34,6 +34,7 @@ public abstract class Day02 : ISolution
     }
 
     protected abstract void RunDay2(IEnumerable<(Move OpponentMove, string OtherValue)> input);
+    protected void Log(string message) => Console.WriteLine($"[{GetType().Name}] {message}");
     
     /// <summary>
     /// Compute the total score for a collection of rounds
