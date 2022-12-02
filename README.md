@@ -1,7 +1,5 @@
 # advent-of-code-2022
 
----
-
 To run, build the project and pass in a day and part number. Example: `dotnet AdventOfCode.dll 1 1`.
 
 | Day    | Description      | Links                                                                                                            |
