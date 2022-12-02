@@ -4,6 +4,7 @@
 * From Rider - Select a day/part from the Run Configurations dropdown and click Run.
 * From CLI - navigate to the solution root and execute `dotnet run --project AdventOfCode Day<number> Part<number>`
   * Day/part numbers are case-sensitive. Day must be a two digits and part should be one digit. For example: `... Day01 Part1` would execute day 1 / part 1.
+* You can also run all solutions at once using `run_all.sh` or `run_all.bat`.
   * Please be sure to run from the solution root directory, otherwise the paths will not resolve correctly.
 
 

@@ -13,8 +13,6 @@ public static class Program
         var solutionFile = $"AdventOfCode/{dayName}/input.txt";
         
         var solution = LoadSolution(solutionName);
-        
-        Console.WriteLine($"Running {solutionName}.");
         await solution.Run(solutionFile, solutionArgs);
     }
 
