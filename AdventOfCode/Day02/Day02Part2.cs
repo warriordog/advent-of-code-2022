@@ -16,27 +16,20 @@ public class Day02Part2 : Day02
         { "Y", Outcome.PlayerDraw },
         { "Z", Outcome.PlayerWin }
     };
-
-    protected override void RunDay2(IEnumerable<(Move OpponentMove, string OtherValue)> input)
+    
+    protected override Round ConstructRound(Move opponentMove, string otherValue)
     {
-        var rounds = input
-            .Select(i =>
-            {
-                var desiredOutcome = OutcomesByAction[i.OtherValue];
-                var playerMove = FindPlayerMoveToResultInOutcome(i.OpponentMove, desiredOutcome);
-                return new Round(playerMove, i.OpponentMove);
-            });
-        
-        
-        var totalScore = ComputeTotalScore(rounds);
-        Log($"If everything goes according to the guide, then the total score will be [{totalScore}].");
+        var desiredOutcome = OutcomesByAction[otherValue];
+        var playerMove = FindPlayerMoveToResultInOutcome(opponentMove, desiredOutcome);
+        return new Round(playerMove, opponentMove);
     }
 
-    
     private static Move FindPlayerMoveToResultInOutcome(Move opponentMove, Outcome desiredOutcome)
     {
         if (desiredOutcome == Outcome.PlayerWin) return opponentMove.LosesTo;
         if (desiredOutcome == Outcome.PlayerLose) return opponentMove.WinsOver;
         return opponentMove;
     }
+    
+    protected override void LogResult(int totalScore) => Log($"If everything goes according to the guide, then the total score will be [{totalScore}].");
 }

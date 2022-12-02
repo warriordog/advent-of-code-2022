@@ -14,17 +14,12 @@ public class Day02Part1 : Day02
         { "Y", Move.Paper },
         { "Z", Move.Scissors }
     };
-    
-    protected override void RunDay2(IEnumerable<(Move OpponentMove, string OtherValue)> input)
+
+    protected override Round ConstructRound(Move opponentMove, string otherValue)
     {
-        var rounds = input
-            .Select(i =>
-            {
-                var player = PlayerShapesByAction[i.OtherValue];
-                return new Round(player, i.OpponentMove);
-            });
-        
-        var totalScore = ComputeTotalScore(rounds);
-        Log($"The total score from the strategy guide is [{totalScore}].");
+        var player = PlayerShapesByAction[otherValue];
+        return new Round(player, opponentMove);
     }
+    
+    protected override void LogResult(int totalScore) => Log($"The total score from the strategy guide is [{totalScore}].");
 }

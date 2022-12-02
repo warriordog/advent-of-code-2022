@@ -58,14 +58,13 @@ public class Move
         {
             return Outcome.PlayerWin;
         }
-        else if (LosesTo.Name == opponent.Name)
+
+        if (LosesTo.Name == opponent.Name)
         {
             return Outcome.PlayerLose;
         }
-        else
-        {
-            return Outcome.PlayerDraw;
-        }
+
+        return Outcome.PlayerDraw;
     }
         
     // Oh god what a hack
