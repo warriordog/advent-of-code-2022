@@ -4,10 +4,9 @@ namespace AdventOfCode.Day01;
 
 public abstract class Day01 : ISolution
 {
-    public async Task Run(string inputFile, List<string> solutionArgs)
+    public void Run(string inputFile)
     {
-        var inputText = await File.ReadAllTextAsync(inputFile);
-        var elves = inputText
+        var elves = inputFile
                 .SplitByTwoThenOneEOL()
                 .Select(chunk => chunk.Aggregate(0, (sum, line) => sum + int.Parse(line)))
             ;

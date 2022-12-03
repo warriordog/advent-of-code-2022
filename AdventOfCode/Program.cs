@@ -1,6 +1,7 @@
 using AdventOfCode.Common;
 using AdventOfCode.Day01;
 using AdventOfCode.Day02;
+using AdventOfCode.Day03;
 
 namespace AdventOfCode;
 
@@ -15,18 +16,23 @@ public static class Program
         { "Day02", new() {
             { "Part1", () => new Day02Part1() },
             { "Part2", () => new Day02Part2() }
+        }},
+        { "Day03", new() {
+            { "Part1", () => new Day03Part1() },
+            { "Part2", () => new Day03Part2() }
         }}
     };
 
     public static async Task Main(string[] args)
     {
-        if (args.Length == 1 && args[0].ToLower() == "all")
-        {
-            await RunAllSolutions();
-        }
+        var operation = args.Parse("operation").ToLower();
+        if (operation == "all") await RunAllSolutions();
+        else if (operation == "run") await RunOneSolution(args, false);
+        else if (operation == "test") await RunOneSolution(args, true);
         else
         {
-            await RunOneSolution(args);
+            await Console.Error.WriteLineAsync($"Unknown operation {operation}. Supported values are 'all', 'run', and 'test'.");
+            throw new ApplicationException($"Unknown operation {operation}");
         }
     }
 
@@ -36,14 +42,17 @@ public static class Program
         {
             foreach (var factory in partMap.Values)
             {
-                await ExecuteSolution(day, factory, new List<string>());
+                await ExecuteSolution(day, factory, false);
             }
         }
     }
 
-    private static async Task RunOneSolution(string[] args)
+    private static async Task RunOneSolution(string[] args, bool isTest)
     {
-        var (dayName, partName) = args.Parse("day name/number", "part name/number");
+        var (dayName, partName) = args
+            .Skip(1)
+            .ToList()
+            .Parse("day name/number", "part name/number");
         
         if (!SolutionMap.TryGetValue(dayName, out var partMap))
         {
@@ -56,14 +65,21 @@ public static class Program
             throw new ApplicationException("Part was not found in SolutionMap");
         }
         
-        var solutionArgs = args.Skip(2).ToList();
-        await ExecuteSolution(dayName, factory, solutionArgs);
+        await ExecuteSolution(dayName, factory, isTest);
     }
 
-    private static async Task ExecuteSolution(string day, Func<ISolution> factory, List<string> args)
+    private static async Task ExecuteSolution(string day, Func<ISolution> factory, bool isTest)
     {
-        var inputFile = $"AdventOfCode/{day}/input.txt";
+        var inputFileName = isTest ? "test" : "input";
+        var inputPath = $"AdventOfCode/{day}/{inputFileName}.txt";
+        var inputFile = await File.ReadAllTextAsync(inputPath);
+
+        if (isTest)
+        {
+            await Console.Out.WriteLineAsync("Starting in TEST mode.");
+        }
+        
         var solution = factory();
-        await solution.Run(inputFile, args);
+        solution.Run(inputFile);
     }
 }

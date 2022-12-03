@@ -1,4 +1,6 @@
-﻿namespace AdventOfCode.Day02;
+﻿using AdventOfCode.Common;
+
+namespace AdventOfCode.Day02;
 
 public abstract class Day02 : ISolution
 {
@@ -15,13 +17,11 @@ public abstract class Day02 : ISolution
         { "C", Move.Scissors }
     };
     
-    public async Task Run(string inputFile, List<string> solutionArgs)
+    public void Run(string inputFile)
     {
-        var inputLines = await File.ReadAllLinesAsync(inputFile);
-
-        var totalScore = inputLines
-            // Skip empty lines (sometimes there is a trailing newline)
-            .Where(line => line.Length > 0)
+        var totalScore = inputFile
+            .SplitByEOL()
+            .SkipEmptyStrings()
             .Select(line =>
             {
                 // Parse each line into a round
