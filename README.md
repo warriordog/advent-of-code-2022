@@ -5,20 +5,22 @@ I'm not competing on any leaderboards this year, but I do plan to complete both 
 As usual, I'm also prioritizing readable code over compact or "magic" solutions.
 Feedback and questions are welcome!
 
-### Instructions
-* To run a single solution:
-  * From Rider - Select a day/part from the Run Configurations dropdown and click Run.
-  * From CLI - navigate to the solution root and execute `dotnet run --project AdventOfCode run Day<number> Part<number> [solution-specific arguments]`
-    * Day/part numbers are case-sensitive. Day must be a two digits and part should be one digit. For example: `... Day01 Part1` would execute day 1 / part 1.
-    * Any arguments after the part number will be passed on to the solution. See the "Arguments" column in the table below to see what arguments are supported.
-    * Please be sure to run from the solution root directory, otherwise the paths will not resolve correctly.
-* To run a single solution with test data:
-  * From Rider - click "edit configurations" and select a day/part run configuration. In the "program arguments" field, change `run` to `test`.
-  * From CLI - use same steps as before, but replace `run` with `test` in the command.
-* To run all solutions:
-  * From Rider - Select the `Run All` run configuration and click Run.
-  * From CLI - navigate to the solution root and execute `dotnet run --project AdventOfCode all`
-
+### Usage
+* From Rider IDE:
+  1. select one of the included run configurations and click "Run" or "Debug".
+* From a terminal:
+  1. Open a terminal and navigate to the solution root. Please be sure to run from the solution root and not the project root or build directory. Otherwise the paths will not resolve correctly.
+  2. Execute `dotnet run --project AdventOfCode -- <command> [options]`
+     * Supported commands:
+       * `run <day> [part] [--input path_to_input]` - run one or more solutions. Part defaults to `all`.
+       * `list [day] [part]` - list available solutions. Part and day default to `all`.
+       * `help [command]` - show help.
+       * `version` - show project version.
+     * Parameters:
+       * `day` - should be in `Day##` format. Can also be the string `all` to select all days.
+       * `part` - should be in `Part#` format. Can also be the string `all` to select all parts.
+       * `path_to_input` - if set, overrides the input file. Path is resolved relative to the current working directory.
+       * `command` - if set, shows detailed help about a specific command.
 
 ### Solutions
 | Day                         | Part 1                                    | Part 2                                    | Name                    | Arguments |
