@@ -20,8 +20,8 @@ Feedback and questions are welcome!
          * `[--min-warmup-rounds num_rounds]` - set the minimum number of warmup rounds (default 100).
          * `[--min-sample-time time_in_ms]` - set the minimum time (in milliseconds) to run sampling (benchmark) rounds (default 10000ms).
          * `[--min-sample-rounds num_rounds]` - set the minimum number of sampling (benchmark) rounds (default 10).
-       * `help [command]` - show help.
-       * `version` - show project version.
+       * `--help [command]` - show help.
+       * `--version` - show project version.
      * Parameters:
        * `day` - should be in `Day##` format. Can also be the string `all` to select all days.
        * `part` - should be in `Part#` format. Can also be the string `all` to select all parts.
