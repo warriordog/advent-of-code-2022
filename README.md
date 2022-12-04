@@ -29,12 +29,12 @@ Feedback and questions are welcome!
        * `command` - if set, shows detailed help about a specific command.
 
 ### Solutions
-| Day                         | Part 1                                    | Part 2                                    | Name                    | Arguments |
-|-----------------------------|-------------------------------------------|-------------------------------------------|-------------------------|-----------|
-| [Day04](AdventOfCode/Day04) | [Part1](AdventOfCode/Day04/Day04Part1.cs) | [Part2](AdventOfCode/Day04/Day04Part2.cs) | Camp Cleanup            | n/a       |
-| [Day03](AdventOfCode/Day03) | [Part1](AdventOfCode/Day03/Day03Part1.cs) | [Part2](AdventOfCode/Day03/Day03Part2.cs) | Rucksack Reorganization | n/a       |
-| [Day02](AdventOfCode/Day02) | [Part1](AdventOfCode/Day02/Day02Part1.cs) | [Part2](AdventOfCode/Day02/Day02Part2.cs) | Rock Paper Scissors     | n/a       |
-| [Day01](AdventOfCode/Day01) | [Part1](AdventOfCode/Day01/Day01Part1.cs) | [Part2](AdventOfCode/Day01/Day01Part2.cs) | Calorie Counting        | n/a       |
+| Day                         | Part 1                                    | Part 2                                    | Name                                                           |
+|-----------------------------|-------------------------------------------|-------------------------------------------|----------------------------------------------------------------|
+| [Day04](AdventOfCode/Day04) | [Part1](AdventOfCode/Day04/Day04Part1.cs) | [Part2](AdventOfCode/Day04/Day04Part2.cs) | [Camp Cleanup](https://adventofcode.com/2022/day/4)            |
+| [Day03](AdventOfCode/Day03) | [Part1](AdventOfCode/Day03/Day03Part1.cs) | [Part2](AdventOfCode/Day03/Day03Part2.cs) | [Rucksack Reorganization](https://adventofcode.com/2022/day/3) |
+| [Day02](AdventOfCode/Day02) | [Part1](AdventOfCode/Day02/Day02Part1.cs) | [Part2](AdventOfCode/Day02/Day02Part2.cs) | [Rock Paper Scissors](https://adventofcode.com/2022/day/2)     |
+| [Day01](AdventOfCode/Day01) | [Part1](AdventOfCode/Day01/Day01Part1.cs) | [Part2](AdventOfCode/Day01/Day01Part2.cs) | [Calorie Counting](https://adventofcode.com/2022/day/1)        |
 
 ### Details
 * Dotnet 6 is required to run the solutions.
