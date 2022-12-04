@@ -1,6 +1,3 @@
-using System.Text.RegularExpressions;
-using AdventOfCode.Common;
-
 namespace AdventOfCode.Day01;
 
 public class Day01Part1 : Day01
