@@ -30,7 +30,7 @@ public class BenchmarkRunner
         var sampleMs = RunRounds(solution, input, _minSampleRounds, _minSampleTime, out var sampleRounds);
 
         var average = sampleMs / sampleRounds;
-        return new BenchmarkResult()
+        return new BenchmarkResult
         {
             TotalWarmupTimeMs = warmupMs,
             TotalWarmupRounds = warmupRounds,
