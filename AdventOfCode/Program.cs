@@ -1,140 +1,76 @@
 using System.CommandLine;
+using AdventOfCode;
 using AdventOfCode.Common;
-using AdventOfCode.Day01;
-using AdventOfCode.Day02;
-using AdventOfCode.Day03;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 
-namespace AdventOfCode;
+const string AllDaysToken = "all";
+const string AllPartsToken = "all";
 
-public static class Program
+var rootCmd = new RootCommand("Advent of Code Solution Runner");
+var runCmd = new Command("run", "Run a solution");
+var runInputOption = new Option<FileInfo>("--input", description: "File to use as problem input (defaults to input.txt in the solution folder)");
+var runDayArgument = new Argument<string>("day", $"day number (Day## or '{AllDaysToken}')");
+var runPartArgument = new Argument<string>("part", description: $"part number (Part# or '{AllPartsToken}')", getDefaultValue: () => AllPartsToken);
+var listCmd = new Command("list", "List known solutions");
+var listDayArgument = new Argument<string>("day", description: $"day number (Day## or '{AllDaysToken}')", getDefaultValue: () => AllDaysToken);
+
+runInputOption.AddAlias("-i");
+runCmd.AddOption(runInputOption);
+runCmd.AddArgument(runDayArgument);
+runCmd.AddArgument(runPartArgument);
+runCmd.SetHandler(ExecuteRunCommand, runInputOption, runDayArgument, runPartArgument);
+rootCmd.Add(runCmd);
+
+listCmd.AddArgument(listDayArgument);
+listCmd.SetHandler(ExecuteListCommand, listDayArgument);
+rootCmd.Add(listCmd);
+
+// Parse command line
+return await rootCmd.InvokeAsync(args);
+
+// Adapter for list command
+async Task ExecuteListCommand(string day)
 {
-    private const string AllDaysToken = "all";
-    private const string AllPartsToken = "all";
+    var dayForRunner = ConvertIdentifier(day);
     
-    private static readonly Dictionary<string, Dictionary<string, Func<ISolution>>> SolutionMap = new()
-    {
-        { "Day01", new() {
-            { "Part1", () => new Day01Part1() },
-            { "Part2", () => new Day01Part2() }
-        }},
-        { "Day02", new() {
-            { "Part1", () => new Day02Part1() },
-            { "Part2", () => new Day02Part2() }
-        }},
-        { "Day03", new() {
-            { "Part1", () => new Day03Part1() },
-            { "Part2", () => new Day03Part2() }
-        }}
-    };
+    var runner = Setup();
+    await runner.ExecuteListCommand(dayForRunner);
+}
 
-    public static async Task<int> Main(string[] args)
-    {
-        var rootCmd = new RootCommand("Advent of Code Solution Runner");
-        var runCmd = new Command("run", "Run a solution");
-        var runInputOption = new Option<FileInfo>("--input", description: "File to use as problem input (defaults to input.txt in the solution folder)");
-        var runDayArgument = new Argument<string>("day", $"day number (Day## or '{AllDaysToken}')");
-        var runPartArgument = new Argument<string>("part", description: $"part number (Part# or '{AllPartsToken}')", getDefaultValue: () => AllPartsToken);
-        var listCmd = new Command("list", "List known solutions");
-        var listDayArgument = new Argument<string>("day", description: $"day number (Day## or '{AllDaysToken}')", getDefaultValue: () => AllDaysToken);
+// Adapter for run command
+async Task ExecuteRunCommand(FileInfo? inputFile, string day, string part)
+{
+    var dayForRunner = ConvertIdentifier(day);
+    var partForRunner = ConvertIdentifier(part);
+    
+    var runner = Setup(builder => builder
+        .ConfigureServices(services => services
+            .AddOptions<RunnerOptions>()
+            .Configure(o => o.CustomInputFile = inputFile)
+        ));
+    await runner.ExecuteRunCommand(dayForRunner, partForRunner);
+}
 
-        runInputOption.AddAlias("-i");
-        runCmd.AddOption(runInputOption);
-        runCmd.AddArgument(runDayArgument);
-        runCmd.AddArgument(runPartArgument);
-        runCmd.SetHandler(ExecuteRunCommand, runInputOption, runDayArgument, runPartArgument);
-        rootCmd.Add(runCmd);
-        
-        listCmd.AddArgument(listDayArgument);
-        listCmd.SetHandler(ExecuteListCommand, listDayArgument);
-        rootCmd.Add(listCmd);
-        
-        
-        return await rootCmd.InvokeAsync(args);
-    }
-    
-    private static void ExecuteListCommand(string day)
-    {
-        Console.WriteLine($"Listing solutions for {day}.");
-        
-        if (day.Equals(AllDaysToken, StringComparison.OrdinalIgnoreCase))
-        {
-            foreach (var dayKey in SolutionMap.Keys)
-            {
-                ListSolutionsForDay(dayKey);
-            }
-        }
-        else
-        {
-            ListSolutionsForDay(day);
-        }
-    }
-    
-    private static void ListSolutionsForDay(string dayKey)
-    {
-        Console.WriteLine($"{dayKey}:");
-        if (SolutionMap.TryGetValue(dayKey, out var partMap) && partMap.Any())
-        {
-            foreach (var (part, _) in partMap)
-            {
-                Console.WriteLine($"    {part}");
-            }
-        }
-        else
-        {
-            Console.WriteLine("    * no results *");
-        }
-    }
+// Replace "all" with null
+string? ConvertIdentifier(string id) => id.Equals(AllDaysToken, StringComparison.OrdinalIgnoreCase) ? null : id;
 
-    private static async Task ExecuteRunCommand(FileInfo? inputFile, string day, string part)
-    {
-        if (day.Equals(AllDaysToken, StringComparison.OrdinalIgnoreCase))
-        {
-            foreach (var dayKey in SolutionMap.Keys)
-            {
-                await ExecuteDay(inputFile, dayKey, part);
-            }
-        }
-        else
-        {
-            await ExecuteDay(inputFile, day, part);
-        }
-    }
-    
-    private static async Task ExecuteDay(FileInfo? inputFile, string dayKey, string part)
-    {
-        if (!SolutionMap.TryGetValue(dayKey, out var partMap))
-        {
-            await Console.Error.WriteLineAsync($"No solutions found for {dayKey}");
-            throw new ArgumentException($"Day is not in SolutionMap - {dayKey}", nameof(dayKey));
-        }
-        
-        if (part.Equals(AllPartsToken, StringComparison.OrdinalIgnoreCase))
-        {
-            foreach (var partKey in partMap.Keys)
-            {
-                await ExecuteDayPart(inputFile, dayKey, partKey);
-            } 
-        }
-        else
-        {
-            await ExecuteDayPart(inputFile, dayKey, part);
-        }
-    }
-    
-    private static async Task ExecuteDayPart(FileInfo? inputFile, string dayKey, string partKey)
-    {
-        // Verify and load input file
-        var inputPath = inputFile?.FullName ?? $"AdventOfCode/{dayKey}/input.txt";
-        if (!File.Exists(inputPath))
-        {
-            await Console.Error.WriteLineAsync($"Cannot find input file at \"{inputPath}\". Did you mistype it?");
-            throw new ArgumentException("Input file could not be found", nameof(inputFile));
-        }
-        var input = await File.ReadAllTextAsync(inputPath);
+// Generic setup method
+Runner Setup(Action<IHostBuilder>? adapter = null)
+{
+    var builder = Host.CreateDefaultBuilder();
 
-        // Execute day
-        var factory = SolutionMap[dayKey][partKey];
-        var solution = factory();
-        solution.Run(input);
-    }
+    // Let caller have first dibs
+    adapter?.Invoke(builder);
+    
+    // Populate defaults
+    builder.ConfigureServices(services =>
+    {
+        services.TryAddTransient<Runner>();
+        services.TryAddOptions<RunnerOptions>();
+    });
+
+    var host = builder.Build();
+    return host.Services.GetRequiredService<Runner>();
 }
