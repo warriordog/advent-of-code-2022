@@ -7,9 +7,9 @@ namespace AdventOfCode.Benchmark;
 public class BenchmarkRunner
 {
     private readonly Stopwatch _stopwatch;
-    private readonly long _minWarmupTime;
+    private readonly double _minWarmupTime;
     private readonly int _minWarmupRounds;
-    private readonly long _minSampleTime;
+    private readonly double _minSampleTime;
     private readonly int _minSampleRounds;
 
     public BenchmarkRunner(IOptions<BenchmarkRunnerOptions> options)
@@ -40,32 +40,39 @@ public class BenchmarkRunner
         };
     }
     
-    private double RunRounds(ISolution solution, string input, int minRounds, long minTime, out int actualRounds)
+    private double RunRounds(ISolution solution, string input, int minRounds, double minTime, out int actualRounds)
     {
-        _stopwatch.Restart();
-
+        var minTicks = MillisecondsToStopwatchTicks(minTime);
+        
+        var ticks = 0L;
         var rounds = 0;
-        while (rounds < minRounds || _stopwatch.ElapsedMilliseconds < minTime)
+        while (rounds < minRounds || ticks < minTicks)
         {
+            _stopwatch.Restart();
             solution.Run(input);
+            _stopwatch.Stop();
+
+            ticks += _stopwatch.ElapsedTicks;
             rounds++;
         }
         
-        _stopwatch.Stop();
         actualRounds = rounds;
-        return _stopwatch.Elapsed.TotalMilliseconds;
+        return StopwatchTicksToMilliseconds(ticks);
     }
+
+    // I hope these are right, I'm not great at math lol
+    private static long MillisecondsToStopwatchTicks(double milliseconds) => (long)(Stopwatch.Frequency * (milliseconds / 1000.0d));
+    private static double StopwatchTicksToMilliseconds(long ticks) => (ticks * 1000.0d) / Stopwatch.Frequency;
 }
 
 public class BenchmarkRunnerOptions
 {
-    public long MinWarmupTimeMs { get; set; } = 100;
+    public double MinWarmupTimeMs { get; set; } = 2000.0d;
     
     [Range(0, int.MaxValue)]
-    public int MinWarmupRounds { get; set; } = 100;
+    public int MinWarmupRounds { get; set; } = 10;
 
-    [Range(1, long.MaxValue)]
-    public long MinSampleTimeMs { get; set; } = 10000;
+    public double MinSampleTimeMs { get; set; } = 10000.0d;
     
     [Range(1, int.MaxValue)]
     public int MinSampleRounds { get; set; } = 10;

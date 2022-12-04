@@ -20,9 +20,9 @@ var partArgument = new Argument<string>("part", description: $"part number (Part
 var listCmd = new Command("list", "List known solutions");
 var optionalDayArgument = new Argument<string>("day", description: $"day number (Day## or '{AllDaysToken}')", getDefaultValue: () => AllDaysToken);
 var benchCmd = new Command("bench", "Benchmark a solution");
-var warmupTimeOption = new Option<long>("--min-warmup-time", description: "Minimum time (in milliseconds) to run warmup rounds", getDefaultValue: () => 100L);
-var warmupRoundsOption = new Option<int>("--min-warmup-rounds", description: "Minimum number of warmup rounds", getDefaultValue: () => 100);
-var sampleTimeOption = new Option<long>("--min-sample-time", description: "Minimum time (in milliseconds) to run sampling (benchmark) rounds", getDefaultValue: () => 10000L);
+var warmupTimeOption = new Option<double>("--min-warmup-time", description: "Minimum time (in milliseconds) to run warmup rounds", getDefaultValue: () => 2000.0d);
+var warmupRoundsOption = new Option<int>("--min-warmup-rounds", description: "Minimum number of warmup rounds", getDefaultValue: () => 10);
+var sampleTimeOption = new Option<double>("--min-sample-time", description: "Minimum time (in milliseconds) to run sampling (benchmark) rounds", getDefaultValue: () => 10000.0d);
 var sampleRoundsOption = new Option<int>("--min-sample-rounds", description: "Minimum number of sample (benchmark) rounds", getDefaultValue: () => 10);
 
 inputOption.AddAlias("-i");
@@ -70,7 +70,7 @@ async Task ExecuteRunCommand(FileInfo? inputFile, string day, string part)
 }
 
 // Adapter for bench command
-async Task ExecuteBenchCommand(FileInfo? inputFile, string day, string part, long warmupTime, int warmupRounds, long sampleTime, int sampleRounds)
+async Task ExecuteBenchCommand(FileInfo? inputFile, string day, string part, double warmupTime, int warmupRounds, double sampleTime, int sampleRounds)
 {
     var dayForRunner = ConvertIdentifier(day);
     var partForRunner = ConvertIdentifier(part);

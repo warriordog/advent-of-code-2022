@@ -10,14 +10,14 @@ Feedback and questions are welcome!
   1. select one of the included run configurations and click "Run" or "Debug".
 * From a terminal:
   1. Open a terminal and navigate to the solution root. Please be sure to run from the solution root and not the project root or build directory. Otherwise the paths will not resolve correctly.
-  2. Execute `dotnet run --project AdventOfCode -- <command> [options]`
+  2. Execute `dotnet run --configuration Release --project AdventOfCode -- <command> [options]`
      * Supported commands:
        * `list [day] [part]` - list available solutions. `part` and `day` both default to `all`.
        * `run <day> [part] [options]` - run one or more solutions. Part defaults to `all`. Supports options:
          * `[--input path_to_input]` - specify an alternate input file to use. Applies to all selected days/parts.
        * `bench <day> [part] [options]` - benchmark one or more solutions. Supports same options and defaults as `run`, and additionally supports:
-         * `[--min-warmup-time time_in_ms]` - set the minimum time (in milliseconds) to run warmup rounds (default 100ms).
-         * `[--min-warmup-rounds num_rounds]` - set the minimum number of warmup rounds (default 100).
+         * `[--min-warmup-time time_in_ms]` - set the minimum time (in milliseconds) to run warmup rounds (default 2000ms).
+         * `[--min-warmup-rounds num_rounds]` - set the minimum number of warmup rounds (default 10).
          * `[--min-sample-time time_in_ms]` - set the minimum time (in milliseconds) to run sampling (benchmark) rounds (default 10000ms).
          * `[--min-sample-rounds num_rounds]` - set the minimum number of sampling (benchmark) rounds (default 10).
        * `--help [command]` - show help.
