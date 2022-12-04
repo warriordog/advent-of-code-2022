@@ -1,4 +1,5 @@
-﻿using AdventOfCode.Common;
+﻿using AdventOfCode.Benchmark;
+using AdventOfCode.Common;
 using AdventOfCode.Day01;
 using AdventOfCode.Day02;
 using AdventOfCode.Day03;
@@ -28,11 +29,13 @@ public class Runner
     };
 
     private readonly FileInfo? _customInputFile;
+    private readonly BenchmarkRunner _benchmarkRunner;
     private readonly IServiceProvider _serviceProvider;
 
-    public Runner(IOptions<RunnerOptions> runnerOptions, IServiceProvider serviceProvider)
+    public Runner(IOptions<RunnerOptions> runnerOptions, IServiceProvider serviceProvider, BenchmarkRunner benchmarkRunner)
     {
         _serviceProvider = serviceProvider;
+        _benchmarkRunner = benchmarkRunner;
         _customInputFile = runnerOptions.Value.CustomInputFile;
     }
 
@@ -71,57 +74,103 @@ public class Runner
 
     public async Task ExecuteRunCommand(string? day, string? part)
     {
+        await ExecuteSolutions(day, part, (solution, _, input) =>
+        {
+            solution.Run(input);
+            return Task.CompletedTask;
+        });
+    }
+
+    public async Task ExecuteBenchCommand(string? day, string? part)
+    {
+        await ExecuteSolutions(day, part, async (solution, def, input) =>
+            {
+                var results = _benchmarkRunner.ExecuteBenchmark(solution, input);
+                await Console.Out.WriteLineAsync($"Benchmark of {def.Day} {def.Part} completed:");
+                await Console.Out.WriteLineAsync($"    Warmup took {results.TotalWarmupTimeMs}ms to complete {results.TotalWarmupRounds} rounds.");
+                await Console.Out.WriteLineAsync($"    Sample took {results.TotalSampleTimeMs}ms to complete {results.TotalSampleRounds} rounds.");
+                await Console.Out.WriteLineAsync($"    This solution completes in an average of {results.AverageTimeMs}ms per run.");
+            }
+        );
+    }
+
+    private async Task ExecuteSolutions(string? day, string? part, Func<ISolution, SolutionDef, string, Task> executor)
+    {
+        var solutions = ResolveSolutions(day, part);
+        foreach (var resolvedSolution in solutions)
+        {
+            await ExecuteSolution(resolvedSolution, executor);
+        }
+    }
+    
+    private List<SolutionDef> ResolveSolutions(string? day, string? part)
+    {
+        var solutions = new List<SolutionDef>();
         if (day == null)
         {
-            foreach (var dayKey in SolutionMap.Keys)
+            foreach (var (dayKey, partMap) in SolutionMap)
             {
-                await ExecuteDay(dayKey, part);
+                ResolveSolutionDay(partMap, dayKey, part, solutions);
             }
         }
         else
         {
-            await ExecuteDay(day, part);
+            if (!SolutionMap.TryGetValue(day, out var partMap))
+            {
+                Console.Error.WriteLine($"No solutions found for {day}");
+                throw new ArgumentException($"Day is not in SolutionMap - {day}", nameof(day));
+            }
+            
+            ResolveSolutionDay(partMap, day, part, solutions);
         }
+        return solutions;
     }
 
-    private async Task ExecuteDay(string dayKey, string? part)
+    private void ResolveSolutionDay(Dictionary<string, Type> partMap, string day, string? part, List<SolutionDef> solutions)
     {
-        if (!SolutionMap.TryGetValue(dayKey, out var partMap))
-        {
-            await Console.Error.WriteLineAsync($"No solutions found for {dayKey}");
-            throw new ArgumentException($"Day is not in SolutionMap - {dayKey}", nameof(dayKey));
-        }
-
         if (part == null)
         {
-            foreach (var partKey in partMap.Keys)
+            foreach (var (partKey, type) in partMap)
             {
-                await ExecuteDayPart(dayKey, partKey);
+                var solution = new SolutionDef(type, day, partKey);
+                solutions.Add(solution);
             }
         }
         else
         {
-            await ExecuteDayPart(dayKey, part);
+            if (!partMap.TryGetValue(part, out var solutionType))
+            {
+                Console.Error.WriteLine($"{day} does not have a part called {part}.");
+                throw new ArgumentException($"Part is not in partMap: {part}", nameof(partMap));
+            }
+
+            var solution = new SolutionDef(solutionType, day, part);
+            solutions.Add(solution);
         }
     }
 
-    private async Task ExecuteDayPart(string dayKey, string partKey)
+    private async Task ExecuteSolution(SolutionDef solutionDef, Func<ISolution, SolutionDef, string, Task> executor)
     {
-        // Verify and load input file
+        var input = await LoadInputFile(solutionDef.Day);
+        var solution = _serviceProvider.CreateInstance<ISolution>(solutionDef.SolutionType);
+        await executor(solution, solutionDef, input);
+    }
+    
+    private async Task<string> LoadInputFile(string dayKey)
+    {
         var inputPath = _customInputFile?.FullName ?? $"AdventOfCode/{dayKey}/input.txt";
         if (!File.Exists(inputPath))
         {
             await Console.Error.WriteLineAsync($"Cannot find input file at \"{inputPath}\". Did you mistype it?");
             throw new ApplicationException($"Input file could not be found: \"{inputPath}\"");
         }
-        var input = await File.ReadAllTextAsync(inputPath);
 
-        // Execute day
-        var solutionType = SolutionMap[dayKey][partKey];
-        var solution = _serviceProvider.CreateInstance<ISolution>(solutionType);
-        solution.Run(input);
+        var input = await File.ReadAllTextAsync(inputPath);
+        return input;
     }
 }
+
+internal record SolutionDef(Type SolutionType, string Day, string Part); 
 
 public class RunnerOptions
 {

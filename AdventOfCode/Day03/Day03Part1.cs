@@ -1,7 +1,12 @@
-﻿namespace AdventOfCode.Day03;
+﻿using Microsoft.Extensions.Logging;
+
+namespace AdventOfCode.Day03;
 
 public class Day03Part1 : Day03
 {
+    private readonly ILogger<Day03Part1> _logger;
+    public Day03Part1(ILogger<Day03Part1> logger) => _logger = logger;
+
     protected override void RunDay3(IEnumerable<int[][][]> groups)
     {
         var conflictPrioritySum = groups
@@ -12,6 +17,6 @@ public class Day03Part1 : Day03
                 )
             );
         
-        Log($"The total priority of conflicting items is [{conflictPrioritySum}].");
+        _logger.LogInformation($"The total priority of conflicting items is [{conflictPrioritySum}].");
     }
 }

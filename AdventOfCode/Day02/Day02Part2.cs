@@ -1,4 +1,6 @@
-﻿namespace AdventOfCode.Day02;
+﻿using Microsoft.Extensions.Logging;
+
+namespace AdventOfCode.Day02;
 
 public class Day02Part2 : Day02
 {
@@ -17,6 +19,9 @@ public class Day02Part2 : Day02
         { "Z", Outcome.PlayerWin }
     };
     
+    private readonly ILogger<Day02Part2> _logger;
+    public Day02Part2(ILogger<Day02Part2> logger) => _logger = logger;
+    
     protected override Round ConstructRound(Move opponentMove, string otherValue)
     {
         var desiredOutcome = OutcomesByAction[otherValue];
@@ -31,5 +36,5 @@ public class Day02Part2 : Day02
         return opponentMove;
     }
     
-    protected override void LogResult(int totalScore) => Log($"If everything goes according to the guide, then the total score will be [{totalScore}].");
+    protected override void LogResult(int totalScore) => _logger.LogInformation($"If everything goes according to the guide, then the total score will be [{totalScore}].");
 }

@@ -1,4 +1,6 @@
-﻿namespace AdventOfCode.Day02;
+﻿using Microsoft.Extensions.Logging;
+
+namespace AdventOfCode.Day02;
 
 public class Day02Part1 : Day02
 {
@@ -14,6 +16,10 @@ public class Day02Part1 : Day02
         { "Y", Move.Paper },
         { "Z", Move.Scissors }
     };
+    
+    private readonly ILogger<Day02Part1> _logger;
+    public Day02Part1(ILogger<Day02Part1> logger) => _logger = logger;
+    
 
     protected override Round ConstructRound(Move opponentMove, string otherValue)
     {
@@ -21,5 +27,5 @@ public class Day02Part1 : Day02
         return new Round(player, opponentMove);
     }
     
-    protected override void LogResult(int totalScore) => Log($"The total score from the strategy guide is [{totalScore}].");
+    protected override void LogResult(int totalScore) => _logger.LogInformation($"The total score from the strategy guide is [{totalScore}].");
 }
