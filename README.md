@@ -31,6 +31,7 @@ Feedback and questions are welcome!
 ### Solutions
 | Day                         | Part 1                                    | Part 2                                    | Name                                                           |
 |-----------------------------|-------------------------------------------|-------------------------------------------|----------------------------------------------------------------|
+| [Day05](AdventOfCode/Day05) | [Part1](AdventOfCode/Day05/Day05Part1.cs) | [Part2](AdventOfCode/Day05/Day05Part2.cs) | [Camp Cleanup](https://adventofcode.com/2022/day/5)            |
 | [Day04](AdventOfCode/Day04) | [Part1](AdventOfCode/Day04/Day04Part1.cs) | [Part2](AdventOfCode/Day04/Day04Part2.cs) | [Camp Cleanup](https://adventofcode.com/2022/day/4)            |
 | [Day03](AdventOfCode/Day03) | [Part1](AdventOfCode/Day03/Day03Part1.cs) | [Part2](AdventOfCode/Day03/Day03Part2.cs) | [Rucksack Reorganization](https://adventofcode.com/2022/day/3) |
 | [Day02](AdventOfCode/Day02) | [Part1](AdventOfCode/Day02/Day02Part1.cs) | [Part2](AdventOfCode/Day02/Day02Part2.cs) | [Rock Paper Scissors](https://adventofcode.com/2022/day/2)     |

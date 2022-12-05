@@ -4,6 +4,7 @@ using AdventOfCode.Day01;
 using AdventOfCode.Day02;
 using AdventOfCode.Day03;
 using AdventOfCode.Day04;
+using AdventOfCode.Day05;
 using Microsoft.Extensions.Options;
 
 namespace AdventOfCode;
@@ -30,6 +31,10 @@ public class Runner
         { "Day04", new() {
             { "Part1", typeof(Day04Part1) },
             { "Part2", typeof(Day04Part2) }
+        }},
+        { "Day05", new() {
+            { "Part1", typeof(Day05Part1) },
+            { "Part2", typeof(Day05Part2) }
         }}
     };
 
