@@ -76,7 +76,7 @@ where TStack : new()
             splitLength = 2;
             newlineToken = "\n";
         }
-        var hasTrailingNewline = inputFile.EndsWith(newlineToken);
+        var hasTrailingNewline = inputFile.EndsWith(newlineToken, StringComparison.Ordinal);
         
         // Validate input and findings
         if (split < 0)
@@ -156,20 +156,57 @@ where TStack : new()
     {
         foreach (var line in section)
         {
-            // Another little magic trick - the only spaces are between tokens.
-            // Each line has a consistent layout, so we can hardcode indexes after that.
-            var parts = line.Split(" ");
+            SplitMoveLine(line, out var fromStr, out var toStr, out var countStr);
 
-            // Parse the values.
-            // Sub 1 from "to" and "from" because they are 1-indexed but we are using 0-indexed arrays.
-            // Ugly casting bc it "could" underflow
-            var from = (byte)(byte.Parse(parts[3]) - 1);
-            var to = (byte)(byte.Parse(parts[5]) - 1);
-            var count = byte.Parse(parts[1]);
+            var from = FastParseStack(fromStr);
+            var to = FastParseStack(toStr);
+            var count = byte.Parse(countStr);
 
-            // Yield return - we don't need an intermediate list
+            // Yield return - we don't need an intermediate storage
             yield return new Move(from, to, count);
         }
+    }
+
+    private static void SplitMoveLine(string line, out string from, out string to, out string count)
+    {
+        var start = 5; // Skip over "move "
+        start = ExtractUntilSpace(line, start, out count);
+        start += 5; // Skip over "from ";
+        start = ExtractUntilSpace(line, start, out from);
+        start += 3; // Skip over "to ";
+        to = line[start..];
+    }
+
+    private static int ExtractUntilSpace(string line, int start, out string extracted)
+    {
+        var end = line.IndexOf(' ', start);
+        extracted = line[start..end]; // Extract the word
+        return end + 1; // Consume the space and return next starting point
+    }
+
+    private static byte FastParseStack(string stack)
+    {
+        if (stack.Length == 1)
+        {
+            return stack[0] switch
+            {
+                // Not a typo - we are bundling the conversion from 1-indexed to 0-indexed numbering to remove a subtraction
+                '1' => 0,
+                '2' => 1,
+                '3' => 2,
+                '4' => 3,
+                '5' => 4,
+                '6' => 5,
+                '7' => 6,
+                '8' => 7,
+                '9' => 8,
+                '0' => throw new ArgumentOutOfRangeException(nameof(stack), "Stack ID must be greater than 0"),
+                _ => throw new ArgumentOutOfRangeException(nameof(stack), "Stack ID must be a number")
+            };
+        }
+
+        // Ugly casting is required by C# bc it could underflow
+        return (byte)(byte.Parse(stack) - 1);
     }
 }
 
