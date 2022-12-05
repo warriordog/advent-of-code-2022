@@ -24,6 +24,7 @@ var warmupTimeOption = new Option<double>("--min-warmup-time", description: "Min
 var warmupRoundsOption = new Option<int>("--min-warmup-rounds", description: "Minimum number of warmup rounds", getDefaultValue: () => 10);
 var sampleTimeOption = new Option<double>("--min-sample-time", description: "Minimum time (in milliseconds) to run sampling (benchmark) rounds", getDefaultValue: () => 10000.0d);
 var sampleRoundsOption = new Option<int>("--min-sample-rounds", description: "Minimum number of sample (benchmark) rounds", getDefaultValue: () => 10);
+var disableWarmupOption = new Option<bool>("--disable-warmup", description: "Disables the warmup rounds while benchmarking", getDefaultValue: () => false);
 
 inputOption.AddAlias("-i");
 runCmd.AddOption(inputOption);
@@ -42,9 +43,10 @@ benchCmd.AddOption(warmupTimeOption);
 benchCmd.AddOption(warmupRoundsOption);
 benchCmd.AddOption(sampleTimeOption);
 benchCmd.AddOption(sampleRoundsOption);
+benchCmd.AddOption(disableWarmupOption);
 benchCmd.AddArgument(requiredDayArgument);
 benchCmd.AddArgument(partArgument);
-benchCmd.SetHandler(ExecuteBenchCommand, inputOption, requiredDayArgument, partArgument, warmupTimeOption, warmupRoundsOption, sampleTimeOption, sampleRoundsOption);
+benchCmd.SetHandler(ExecuteBenchCommand, inputOption, requiredDayArgument, partArgument, warmupTimeOption, warmupRoundsOption, sampleTimeOption, sampleRoundsOption, disableWarmupOption);
 rootCmd.Add(benchCmd);
 
 // Parse command line
@@ -70,7 +72,7 @@ async Task ExecuteRunCommand(FileInfo? inputFile, string day, string part)
 }
 
 // Adapter for bench command
-async Task ExecuteBenchCommand(FileInfo? inputFile, string day, string part, double warmupTime, int warmupRounds, double sampleTime, int sampleRounds)
+async Task ExecuteBenchCommand(FileInfo? inputFile, string day, string part, double warmupTime, int warmupRounds, double sampleTime, int sampleRounds, bool disableWarmup)
 {
     var dayForRunner = ConvertIdentifier(day);
     var partForRunner = ConvertIdentifier(part);
@@ -83,6 +85,7 @@ async Task ExecuteBenchCommand(FileInfo? inputFile, string day, string part, dou
             .AddOptions<BenchmarkRunnerOptions>()
             .Configure(o =>
             {
+                o.DisableWarmup = disableWarmup;
                 o.MinWarmupTimeMs = warmupTime;
                 o.MinWarmupRounds = warmupRounds;
                 o.MinSampleTimeMs = sampleTime;

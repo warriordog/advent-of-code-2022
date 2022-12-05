@@ -97,7 +97,10 @@ public class Runner
             {
                 var results = _benchmarkRunner.ExecuteBenchmark(solution, input);
                 await Console.Out.WriteLineAsync($"Benchmark of {def.Day} {def.Part} completed:");
-                await Console.Out.WriteLineAsync($"    Warmup took {results.TotalWarmupTimeMs}ms to complete {results.TotalWarmupRounds} rounds.");
+                if (results.WarmupWasRun)
+                    await Console.Out.WriteLineAsync($"    Warmup took {results.TotalWarmupTimeMs}ms to complete {results.TotalWarmupRounds} rounds.");
+                else
+                    await Console.Out.WriteLineAsync("    Warmup was disabled and skipped.");
                 await Console.Out.WriteLineAsync($"    Sample took {results.TotalSampleTimeMs}ms to complete {results.TotalSampleRounds} rounds.");
                 await Console.Out.WriteLineAsync($"    This solution completes in an average of {results.AverageTimeMs}ms per run.");
             }

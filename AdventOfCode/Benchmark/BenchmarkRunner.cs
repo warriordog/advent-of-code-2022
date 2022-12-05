@@ -11,6 +11,7 @@ public class BenchmarkRunner
     private readonly int _minWarmupRounds;
     private readonly double _minSampleTime;
     private readonly int _minSampleRounds;
+    private readonly bool _disableWarmup;
 
     public BenchmarkRunner(IOptions<BenchmarkRunnerOptions> options)
     {
@@ -19,19 +20,26 @@ public class BenchmarkRunner
         _minWarmupRounds = options.Value.MinWarmupRounds;
         _minSampleTime = options.Value.MinSampleTimeMs;
         _minSampleRounds = options.Value.MinSampleRounds;
+        _disableWarmup = options.Value.DisableWarmup;
     }
     
     public BenchmarkResult ExecuteBenchmark(ISolution solution, string input)
     {
         // Warmup
-        var warmupMs = RunRounds(solution, input, _minWarmupRounds, _minWarmupTime, out var warmupRounds);
-        
+        var warmupMs = 0.0d;
+        var warmupRounds = 0;
+        if (!_disableWarmup)
+        {
+            warmupMs = RunRounds(solution, input, _minWarmupRounds, _minWarmupTime, out warmupRounds);
+        }
+
         // Sample
         var sampleMs = RunRounds(solution, input, _minSampleRounds, _minSampleTime, out var sampleRounds);
 
         var average = sampleMs / sampleRounds;
         return new BenchmarkResult
         {
+            WarmupWasRun = !_disableWarmup,
             TotalWarmupTimeMs = warmupMs,
             TotalWarmupRounds = warmupRounds,
             TotalSampleTimeMs = sampleMs,
@@ -67,6 +75,7 @@ public class BenchmarkRunner
 
 public class BenchmarkRunnerOptions
 {
+    public bool DisableWarmup { get; set; } = false;
     public double MinWarmupTimeMs { get; set; } = 2000.0d;
     
     [Range(0, int.MaxValue)]

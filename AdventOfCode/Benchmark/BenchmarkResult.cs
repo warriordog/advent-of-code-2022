@@ -2,6 +2,7 @@
 
 public class BenchmarkResult
 {
+    public bool WarmupWasRun { get; init; }
     public double TotalWarmupTimeMs { get; init; }
     public int TotalWarmupRounds { get; init; }
     
