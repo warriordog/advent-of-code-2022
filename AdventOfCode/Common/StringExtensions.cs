@@ -15,4 +15,57 @@ public static class StringExtensions
     public static string[] SplitByEOL(this string str) => EOLRegex.Split(str);
 
     public static IEnumerable<string> SkipEmptyStrings(this IEnumerable<string> strings) => strings.Where(str => str.Length > 0);
+    
+    
+    public static IEnumerable<string> SplitLazyReverse(this string str, string token)
+    {
+        if (str.Length == 0)
+        {
+            yield return str;
+        }
+        else
+        {
+            var endIndex = str.Length - 1;
+            while (true)
+            {
+                var nextMatch = str.LastIndexOf(token, endIndex, StringComparison.Ordinal);
+                if (nextMatch <= -1)
+                {
+                    // Yield last section and stop
+                    yield return str[..endIndex];
+                    break;
+                }
+                
+                // Yield next section and continue
+                yield return str[(nextMatch + token.Length)..(endIndex + 1)];
+                endIndex = nextMatch - 1;
+            } 
+        }
+    }
+
+    public static IEnumerable<string> SplitLazy(this string str, string token)
+    {
+        if (str.Length == 0)
+        {
+            yield return str;
+        }
+        else
+        {
+            var startIndex = 0;
+            while (true)
+            {
+                var nextMatch = str.IndexOf(token, startIndex, StringComparison.Ordinal);
+                if (nextMatch <= -1)
+                {
+                    // Yield last section and stop
+                    yield return str[startIndex..];
+                    break;
+                }
+                
+                // Yield next section and continue
+                yield return str[startIndex..nextMatch];
+                startIndex = nextMatch + token.Length;
+            } 
+        }
+    }
 }

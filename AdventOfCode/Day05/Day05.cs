@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using AdventOfCode.Common;
+using Microsoft.Extensions.Logging;
 
 namespace AdventOfCode.Day05;
 
@@ -58,18 +59,24 @@ where TStack : new()
     /// <returns></returns>
     protected abstract IEnumerable<char> GetTopOfStacks(IEnumerable<TStack> stacks);
 
-    private (string[], string[]) SplitInputFile(string inputFile)
+    private (IEnumerable<string>, IEnumerable<string>) SplitInputFile(string inputFile)
     {
         // Find split point and cache details
-        var splitLength = 4;
-        var splitTokens = new[] { '\r', '\n' };
+        int splitLength;
+        string newlineToken;
         var split = inputFile.IndexOf("\r\n\r\n", StringComparison.Ordinal);
-        if (split < 0)
+        if (split >= 0)
+        {
+            splitLength = 4;
+            newlineToken = "\r\n";
+        }
+        else
         {
             split = inputFile.IndexOf("\n\n", StringComparison.Ordinal);
             splitLength = 2;
-            splitTokens = new[] { '\n' };
+            newlineToken = "\n";
         }
+        var hasTrailingNewline = inputFile.EndsWith(newlineToken);
         
         // Validate input and findings
         if (split < 0)
@@ -80,44 +87,60 @@ where TStack : new()
             throw new ArgumentException("Input file is in the wrong format - moves section is empty", nameof(inputFile));
 
         // Get sections
+        // var stackSection = inputFile[..split]
+        //     .Split(splitTokens, StringSplitOptions.RemoveEmptyEntries);
+        // var movesSection = inputFile[(split + splitLength)..]
+        //     .Split(splitTokens, StringSplitOptions.RemoveEmptyEntries);
         var stackSection = inputFile[..split]
-            .Split(splitTokens, StringSplitOptions.RemoveEmptyEntries);
+            .SplitLazyReverse(newlineToken);
         var movesSection = inputFile[(split + splitLength)..]
-            .Split(splitTokens, StringSplitOptions.RemoveEmptyEntries);
+            .SplitLazy(newlineToken);
+
+        if (hasTrailingNewline)
+        {
+            movesSection = movesSection.SkipLast(1);
+        }
 
         return (stackSection, movesSection);
     }
     
-    private TStack[] ParseStacks(string[] section)
+    private TStack[] ParseStacks(IEnumerable<string> section)
     {
-        // Little bitty hack to skip parsing the footer row:
-        // We only care about the number of columns because they're all in order.
-        // Each column is exactly 3 characters wide w/ one spacer, so we can use math to find the number.
-        // The last column has no trailing spacer, so add one to the length.
-        // Now we can pretend that each column is 4 characters wide with no spacer, so divide by 4 to get the number of columns.
-        var numStacks = (section[0].Length + 1) / 4;
+        var stacks = Array.Empty<TStack>();
+        var numStacks = stacks.Length;
 
-        // Initialize enough stacks to store the crates
-        var stacks = new TStack[numStacks];
-        for (var i = 0; i < numStacks; i++)
+        var isFirstLine = true;
+        foreach (var line in section)
         {
-            stacks[i] = new TStack();
-        }
-        
-        // Parse the starting position of all stacks.
-        // Work row-by-row from the bottom up so that lower indexes will represent lower positions in the stack.
-        // Skip the last (highest index) row because that is the footer.
-        for (var lineIdx = section.Length - 2; lineIdx >= 0; lineIdx--)
-        {
-            // Get row
-            var row = section[lineIdx];
-            
+            // This runs bottom-up, so the first line is actually the labels.
+            // We skip it, but not before using it to calculate how many stacks we need.
+            if (isFirstLine)
+            {
+                // Little bitty hack to skip parsing the footer row:
+                // We only care about the number of columns because they're all in order.
+                // Each column is exactly 3 characters wide w/ one spacer, so we can use math to find the number.
+                // The last column has no trailing spacer, so add one to the length.
+                // Now we can pretend that each column is 4 characters wide with no spacer, so divide by 4 to get the number of columns.
+                numStacks = (line.Length + 1) / 4;
+
+                // Initialize enough stacks to store the crates
+                stacks = new TStack[numStacks];
+                for (var i = 0; i < numStacks; i++)
+                {
+                    stacks[i] = new TStack();
+                }
+
+                // Skip forward to the first "real" line
+                isFirstLine = false;
+                continue;
+            }
+
             // Load each crate into correct column.
             for (var stackIdx = 0; stackIdx < numStacks; stackIdx++)
             {
                 // Starting with index 1, every 4th character is a crate or empty space
                 var crateIdx = 1 + (stackIdx * 4);
-                var crate = row[crateIdx];
+                var crate = line[crateIdx];
                 
                 // Empty space means no crate
                 if (crate != ' ') {
@@ -129,16 +152,10 @@ where TStack : new()
         return stacks;
     }
     
-    private static IEnumerable<Move> ParseMoves(string[] section)
+    private static IEnumerable<Move> ParseMoves(IEnumerable<string> section)
     {
-        for (var lineIdx = 0; lineIdx < section.Length; lineIdx++)
+        foreach (var line in section)
         {
-            var line = section[lineIdx];
-
-            // Skip over trailing newline
-            if (lineIdx == section.Length - 1 && line.Length == 0)
-                continue;
-
             // Another little magic trick - the only spaces are between tokens.
             // Each line has a consistent layout, so we can hardcode indexes after that.
             var parts = line.Split(" ");
