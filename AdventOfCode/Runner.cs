@@ -39,9 +39,11 @@ public class Runner
         }},
         { "Day06", new() {
             { "Part1", typeof(Day06Part1) },
+            { "Part1XOR", typeof(Day06Part1XOR) },
             { "Part2", typeof(Day06Part2) },
             { "Part2SmallList", typeof(Day06Part2SmallList) },
-            { "Part2BitFields", typeof(Day06Part2BitFields) }
+            { "Part2BitFields", typeof(Day06Part2BitFields) },
+            { "Part2XOR", typeof(Day06Part2XOR) }
         }}
     };
 
