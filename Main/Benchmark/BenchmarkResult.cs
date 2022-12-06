@@ -1,4 +1,4 @@
-﻿namespace AdventOfCode.Benchmark;
+﻿namespace Main.Benchmark;
 
 public class BenchmarkResult
 {

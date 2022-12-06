@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
+using AdventOfCode;
 using Microsoft.Extensions.Options;
 
-namespace AdventOfCode.Benchmark;
+namespace Main.Benchmark;
 
 public class BenchmarkRunner
 {

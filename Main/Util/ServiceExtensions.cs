@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace AdventOfCode.Common;
+namespace Main.Util;
 
 public static class ServiceExtensions
 {

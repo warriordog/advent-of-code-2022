@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Logging.Console;
 
-namespace AdventOfCode.Util;
+namespace Main.Util;
 
 public class SolutionConsoleFormatter : ConsoleFormatter
 {

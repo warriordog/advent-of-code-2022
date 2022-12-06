@@ -1,4 +1,4 @@
-﻿using AdventOfCode.Benchmark;
+﻿using AdventOfCode;
 using AdventOfCode.Common;
 using AdventOfCode.Day01;
 using AdventOfCode.Day02;
@@ -6,9 +6,11 @@ using AdventOfCode.Day03;
 using AdventOfCode.Day04;
 using AdventOfCode.Day05;
 using AdventOfCode.Day06;
+using Main.Benchmark;
+using Main.Util;
 using Microsoft.Extensions.Options;
 
-namespace AdventOfCode;
+namespace Main;
 
 /// <summary>
 /// Runs and introspects solutions

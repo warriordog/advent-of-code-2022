@@ -10,7 +10,7 @@ Feedback and questions are welcome!
   1. select one of the included run configurations and click "Run" or "Debug".
 * From a terminal:
   1. Open a terminal and navigate to the solution root. Please be sure to run from the solution root and not the project root or build directory. Otherwise the paths will not resolve correctly.
-  2. Execute `dotnet run --configuration Release --project AdventOfCode -- <command> [options]`
+  2. Execute `dotnet run --configuration Release --project Main -- <command> [options]`
      * Supported commands:
        * `list [day] [part]` - list available solutions. `part` and `day` both default to `all`.
        * `run <day> [part] [options]` - run one or more solutions. Part defaults to `all`. Supports options:

@@ -1,8 +1,7 @@
 using System.CommandLine;
-using AdventOfCode;
-using AdventOfCode.Benchmark;
-using AdventOfCode.Common;
-using AdventOfCode.Util;
+using Main;
+using Main.Benchmark;
+using Main.Util;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
@@ -79,7 +78,7 @@ async Task ExecuteBenchCommand(FileInfo? inputFile, string day, string part, dou
 
     var runner = SetupRunVariant(inputFile, builder => builder
         .ConfigureLogging(logging => logging
-            .SetMinimumLevel(LogLevel.Warning)
+            .AddFilter("AdventOfCode", LogLevel.Warning)
         )
         .ConfigureServices(services => services
             .AddOptions<BenchmarkRunnerOptions>()
