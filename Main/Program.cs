@@ -15,6 +15,7 @@ const string AllPartsToken = "all";
 const string AllVariantsToken = "all";
 
 var rootCmd = new RootCommand("Advent of Code Solution Runner");
+var verboseOption = new Option<bool>("--verbose", description: "Enable verbose output", getDefaultValue: () => false); 
 var runCmd = new Command("run", "Run a solution");
 var customInputOption = new Option<string>("--custom-input", description: "Specify a custom file to use as problem input (relative to current working directory)");
 var inputOption = new Option<string>("--input", description: "Select one of the registered inputs for the solution (see \"list inputs\" for details)");
@@ -38,20 +39,20 @@ runCmd.AddOption(customInputOption);
 runCmd.AddArgument(dayArgument);
 runCmd.AddArgument(partArgument);
 runCmd.AddArgument(variantArgument);
-runCmd.SetHandler(ExecuteRunCommand, inputOption, customInputOption, dayArgument, partArgument, variantArgument);
+runCmd.SetHandler(ExecuteRunCommand, inputOption, customInputOption, dayArgument, partArgument, variantArgument, verboseOption);
 rootCmd.Add(runCmd);
 
 listSolutionsCmd.AddAlias("solution");
 listSolutionsCmd.AddArgument(dayArgument);
 listSolutionsCmd.AddArgument(partArgument);
-listSolutionsCmd.SetHandler(ExecuteListSolutionsCommand, dayArgument, partArgument);
+listSolutionsCmd.SetHandler(ExecuteListSolutionsCommand, dayArgument, partArgument, verboseOption);
 listCmd.AddCommand(listSolutionsCmd);
 
 listInputsCmd.AddAlias("input");
 listInputsCmd.AddArgument(dayArgument);
 listInputsCmd.AddArgument(partArgument);
 listInputsCmd.AddArgument(variantArgument);
-listInputsCmd.SetHandler(ExecuteListInputsCommand, dayArgument, partArgument, variantArgument);
+listInputsCmd.SetHandler(ExecuteListInputsCommand, dayArgument, partArgument, variantArgument, verboseOption);
 listCmd.AddCommand(listInputsCmd);
 
 rootCmd.Add(listCmd);
@@ -70,38 +71,44 @@ benchCmd.AddArgument(variantArgument);
 benchCmd.SetHandler(ExecuteBenchCommand);
 rootCmd.Add(benchCmd);
 
+verboseOption.AddAlias("-v");
+rootCmd.AddGlobalOption(verboseOption);
+
 // Parse command line
 return await rootCmd.InvokeAsync(args);
 
 // Adapter for list solutions command
-async Task ExecuteListSolutionsCommand(string day, string part)
+async Task ExecuteListSolutionsCommand(string day, string part, bool verbose)
 {
     var dayForRunner = ConvertIdentifier(day);
     var partForRunner = ConvertIdentifier(part);
     
-    var runner = Setup();
+    using var host = await Start(verbose); // TODO get cancellationToken
+    var runner = host.Services.GetRequiredService<ISolutionRunner>();
     await runner.ExecuteListSolutionsCommand(dayForRunner, partForRunner);
 }
 
 // Adapter for list inputs command
-async Task ExecuteListInputsCommand(string day, string part, string? variant)
+async Task ExecuteListInputsCommand(string day, string part, string? variant, bool verbose)
 {
     var dayForRunner = ConvertIdentifier(day);
     var partForRunner = ConvertIdentifier(part);
     var variantForRunner = ConvertIdentifier(variant ?? part);
     
-    var runner = Setup();
+    using var host = await Start(verbose); // TODO get cancellationToken
+    var runner = host.Services.GetRequiredService<ISolutionRunner>();
     await runner.ExecuteListInputsCommand(dayForRunner, partForRunner, variantForRunner);
 }
 
 // Adapter for run command
-async Task ExecuteRunCommand(string? input, string? inputFile, string day, string part, string? variant)
+async Task ExecuteRunCommand(string? input, string? inputFile, string day, string part, string? variant, bool verbose)
 {
     var dayForRunner = ConvertIdentifier(day);
     var partForRunner = ConvertIdentifier(part);
     var variantForRunner = ConvertIdentifier(variant ?? part);
 
-    var runner = Setup();
+    using var host = await Start(verbose); // TODO get cancellationToken
+    var runner = host.Services.GetRequiredService<ISolutionRunner>();
     await runner.ExecuteRunCommand(dayForRunner, partForRunner, variantForRunner, input, inputFile);
 }
 
@@ -119,12 +126,14 @@ async Task ExecuteBenchCommand(InvocationContext ctx)
     var warmupRounds = ctx.ParseResult.GetValueForOption(warmupRoundsOption);
     var sampleTime = ctx.ParseResult.GetValueForOption(sampleTimeOption);
     var sampleRounds = ctx.ParseResult.GetValueForOption(sampleRoundsOption);
+    var verbose = ctx.ParseResult.GetValueForOption(verboseOption);
     
     var dayForRunner = ConvertIdentifier(day);
     var partForRunner = ConvertIdentifier(part);
     var variantForRunner = ConvertIdentifier(variant ?? part);
     
-    var runner = Setup(builder => builder
+    // Start the app
+    using var host = await Start(verbose, builder => builder
         .ConfigureLogging(logging => logging
             .AddFilter("AdventOfCode", LogLevel.Warning)
         )
@@ -138,8 +147,12 @@ async Task ExecuteBenchCommand(InvocationContext ctx)
                 o.MinSampleTimeMs = sampleTime;
                 o.MinSampleRounds = sampleRounds;
             })
-        )
+        ),
+        ctx.GetCancellationToken()
     );
+    
+    // Run command
+    var runner = host.Services.GetRequiredService<ISolutionRunner>();
     await runner.ExecuteBenchCommand(dayForRunner, partForRunner, variantForRunner, input, inputFile);
 }
 
@@ -147,15 +160,21 @@ async Task ExecuteBenchCommand(InvocationContext ctx)
 string? ConvertIdentifier(string id) => id.Equals(AllDaysToken, StringComparison.OrdinalIgnoreCase) ? null : id;
 
 // Generic setup method
-ISolutionRunner Setup(Action<IHostBuilder>? adapter = null)
+async Task<IHost> Start(bool verbose = false, Action<IHostBuilder>? adapter = null, CancellationToken? ct = null)
 {
     var builder = Host.CreateDefaultBuilder();
 
+    // Enable console support
+    builder.UseConsoleLifetime(console => 
+        console.SuppressStatusMessages = true
+    );
+    
     // Set config first so that adapter can override
     builder.ConfigureLogging(logging => logging
         .ClearProviders()
         .AddConsoleFormatter<SolutionConsoleFormatter, ConsoleFormatterOptions>()
         .AddConsole(console => console.FormatterName = nameof(SolutionConsoleFormatter))
+        .SetMinimumLevel(verbose ? LogLevel.Debug : LogLevel.Information)
     );
     
     // Let caller override config and pre-populate services
@@ -170,13 +189,27 @@ ISolutionRunner Setup(Action<IHostBuilder>? adapter = null)
         services.TryAddSingleton<IBenchmarkRunner, BenchmarkRunner>();
     });
 
-    // Put it all together
+    // Create the host
     var host = builder.Build();
+    
+    // Flush IO on exit
+    var lifetime = host.Services.GetRequiredService<IHostApplicationLifetime>();
+    lifetime.ApplicationStopped.Register(() =>
+    {
+        // Flush these bad boys to prevent truncated output
+        Console.Out.Flush();
+        Console.Error.Flush();
+    });
 
     // Populate the SolutionRegistry
     var registry = host.Services.GetRequiredService<ISolutionRegistry>();
     registry.AddSolutions(typeof(ISolution).Assembly);
     
-    // Return the SolutionRunner so that command handlers can call specific entry points
-    return host.Services.GetRequiredService<ISolutionRunner>();
+    // Start up host
+    if (ct != null)
+        await host.StartAsync(ct.Value);
+    else
+        await host.StartAsync();
+    
+    return host;
 }

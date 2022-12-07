@@ -26,6 +26,8 @@ Feedback and questions are welcome!
          * `[--no-warmup]` - skip warmup rounds entirely. Useful when using an external profiler.
        * `--help [command]` - show help.
        * `--version` - show project version.
+     * Options:
+       * `--vebose` - Show verbose / debug output. Defaults to off.
      * Parameters:
        * `day` - should be in `Day##` format. Can also be the string `all` to select all days.
        * `part` - should be in `Part#` format. Can also be the string `all` to select all parts.
