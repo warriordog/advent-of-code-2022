@@ -3,8 +3,8 @@
 namespace AdventOfCode.Day05;
 
 [Solution("Day05", "Part1")]
-[InputFile("input.txt", resolution: InputFileResolution.PathRelativeToSolution)]
-[InputFile("test.txt", type: InputFileType.Test, resolution: InputFileResolution.PathRelativeToSolution)]
+[InputFile("input.txt")]
+[InputFile("test.txt", type: InputFileType.Test)]
 public class Day05Part1 : Day05<Stack<char>>
 {
     public Day05Part1(ILogger<Day05Part1> logger): base(logger) {}

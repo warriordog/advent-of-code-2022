@@ -1,4 +1,5 @@
-﻿namespace AdventOfCode;
+﻿#pragma warning disable CS0618
+namespace AdventOfCode;
 
 /// <summary>
 /// Defines an input file that can be loaded and passed to a solution.
@@ -56,7 +57,7 @@ public enum InputFileResolution
     /// <summary>
     /// Input file should be resolved as a filesystem path relative to the solution's source code directory.
     /// </summary>
-    [Obsolete("This will be removed soon. Use embedded resources instead.")]
+    [Obsolete("This is unreliable and kept only for testing and rapid development")]
     PathRelativeToSolution,
 
     /// <summary>

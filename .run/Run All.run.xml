@@ -1,7 +1,7 @@
 ﻿<component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Run All" type="DotNetProject" factoryName=".NET Project">
     <option name="EXE_PATH" value="$PROJECT_DIR$/Main/bin/Debug/net6.0/Main.exe" />
-    <option name="PROGRAM_PARAMETERS" value="all" />
+    <option name="PROGRAM_PARAMETERS" value="run all" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/" />
     <option name="PASS_PARENT_ENVS" value="1" />
     <option name="USE_EXTERNAL_CONSOLE" value="0" />

@@ -3,9 +3,9 @@
 namespace AdventOfCode.Day03;
 
 [Solution("Day03", "Part2")]
-[InputFile("input.txt", resolution: InputFileResolution.PathRelativeToSolution)]
-[InputFile("test.txt", name: "test", description: "Official test data from AoC", type: InputFileType.Test, resolution: InputFileResolution.PathRelativeToSolution)]
-[InputFile("test2.txt", name: "test2", description: "Custom to test a bug in Part 2", type: InputFileType.Test, resolution: InputFileResolution.PathRelativeToSolution)]
+[InputFile("input.txt")]
+[InputFile("test.txt", type: InputFileType.Test, name: "test", description: "Official test data from AoC")]
+[InputFile("test2.txt", type: InputFileType.Test, name: "test2", description: "Custom to test a bug in Part 2")]
 public class Day03Part2 : Day03
 {
     private readonly ILogger<Day03Part2> _logger;

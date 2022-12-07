@@ -2,7 +2,6 @@
 using AdventOfCode;
 using Main.Benchmark;
 using Main.Util;
-using Microsoft.Extensions.Primitives;
 
 namespace Main.Services;
 
@@ -210,6 +209,8 @@ public class SolutionRunner : ISolutionRunner
                         sb.Append(", default");
                     if (input.Resolution.IsExternal())
                         sb.Append(", external");
+                    if (input.Resolution.IsRelativeToCWD())
+                        sb.Append(", relative");
                     sb.Append(']');
 
                     await Console.Out.WriteLineAsync(sb.ToString());

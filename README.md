@@ -9,7 +9,7 @@ Feedback and questions are welcome!
 * From Rider IDE:
   1. select one of the included run configurations and click "Run" or "Debug".
 * From a terminal:
-  1. Open a terminal and navigate to the solution root. Please be sure to run from the solution root and not the project root or build directory. Otherwise the paths will not resolve correctly.
+  1. Open a terminal and navigate to the solution root.
   2. Execute `dotnet run --configuration Release --project Main -- <command> [options]`
      * Supported commands:
        * `list <what>` - list data from internal registries. `what` specifies what data to return and can be one of these options:
