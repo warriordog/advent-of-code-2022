@@ -1,8 +1,9 @@
 namespace AdventOfCode;
 
 /// <summary>
-/// An independently-executable solution to a day/part pair.
-/// Implementations must have a public no-args constructor.
+/// An executable AdventOfCode solution.
+/// Solutions must have a public constructor.
+/// Constructor arguments are allowed and will be populated from the runner's DI container.
 /// </summary>
 public interface ISolution
 {

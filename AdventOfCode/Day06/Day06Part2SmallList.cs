@@ -1,8 +1,8 @@
-﻿using System.Text;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 
 namespace AdventOfCode.Day06;
 
+[Solution("Day06", "Part2", "SmallList")]
 public class Day06Part2SmallList : ISolution
 {
     private readonly ILogger<Day06Part2SmallList> _logger;

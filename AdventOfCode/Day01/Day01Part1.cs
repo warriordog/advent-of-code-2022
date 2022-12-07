@@ -2,6 +2,7 @@ using Microsoft.Extensions.Logging;
 
 namespace AdventOfCode.Day01;
 
+[Solution("Day01", "Part1")]
 public class Day01Part1 : Day01
 {
     private readonly ILogger<Day01Part1> _logger;

@@ -1,6 +1,8 @@
 using System.CommandLine;
-using Main;
+using System.CommandLine.Invocation;
+using AdventOfCode;
 using Main.Benchmark;
+using Main.Services;
 using Main.Util;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -10,14 +12,15 @@ using Microsoft.Extensions.Logging.Console;
 
 const string AllDaysToken = "all";
 const string AllPartsToken = "all";
+const string AllVariantsToken = "all";
 
 var rootCmd = new RootCommand("Advent of Code Solution Runner");
 var runCmd = new Command("run", "Run a solution");
 var inputOption = new Option<FileInfo>("--input", description: "File to use as problem input (defaults to input.txt in the solution folder)");
-var requiredDayArgument = new Argument<string>("day", $"day number (Day## or '{AllDaysToken}')");
-var partArgument = new Argument<string>("part", description: $"part number (Part# or '{AllPartsToken}')", getDefaultValue: () => AllPartsToken);
+var dayArgument = new Argument<string>("day", description: $"day number (Day## format) or '{AllDaysToken}'", getDefaultValue: () => AllDaysToken);
+var partArgument = new Argument<string>("part", description: $"part number (Part# format) '{AllPartsToken}'", getDefaultValue: () => AllPartsToken);
+var variantArgument = new Argument<string?>("variant", description: $"variant name or '{AllVariantsToken}'", getDefaultValue: () => null);
 var listCmd = new Command("list", "List known solutions");
-var optionalDayArgument = new Argument<string>("day", description: $"day number (Day## or '{AllDaysToken}')", getDefaultValue: () => AllDaysToken);
 var benchCmd = new Command("bench", "Benchmark a solution");
 var warmupTimeOption = new Option<double>("--min-warmup-time", description: "Minimum time (in milliseconds) to run warmup rounds", getDefaultValue: () => 2000.0d);
 var warmupRoundsOption = new Option<int>("--min-warmup-rounds", description: "Minimum number of warmup rounds", getDefaultValue: () => 10);
@@ -27,13 +30,15 @@ var disableWarmupOption = new Option<bool>("--disable-warmup", description: "Dis
 
 inputOption.AddAlias("-i");
 runCmd.AddOption(inputOption);
-runCmd.AddArgument(requiredDayArgument);
+runCmd.AddArgument(dayArgument);
 runCmd.AddArgument(partArgument);
-runCmd.SetHandler(ExecuteRunCommand, inputOption, requiredDayArgument, partArgument);
+runCmd.AddArgument(variantArgument);
+runCmd.SetHandler(ExecuteRunCommand, inputOption, dayArgument, partArgument, variantArgument);
 rootCmd.Add(runCmd);
 
-listCmd.AddArgument(optionalDayArgument);
-listCmd.SetHandler(ExecuteListCommand, optionalDayArgument);
+listCmd.AddArgument(dayArgument);
+listCmd.AddArgument(partArgument);
+listCmd.SetHandler(ExecuteListCommand, dayArgument, partArgument);
 rootCmd.Add(listCmd);
 
 benchCmd.AddAlias("benchmark");
@@ -43,39 +48,54 @@ benchCmd.AddOption(warmupRoundsOption);
 benchCmd.AddOption(sampleTimeOption);
 benchCmd.AddOption(sampleRoundsOption);
 benchCmd.AddOption(disableWarmupOption);
-benchCmd.AddArgument(requiredDayArgument);
+benchCmd.AddArgument(dayArgument);
 benchCmd.AddArgument(partArgument);
-benchCmd.SetHandler(ExecuteBenchCommand, inputOption, requiredDayArgument, partArgument, warmupTimeOption, warmupRoundsOption, sampleTimeOption, sampleRoundsOption, disableWarmupOption);
+benchCmd.AddArgument(variantArgument);
+benchCmd.SetHandler(ExecuteBenchCommand);
 rootCmd.Add(benchCmd);
 
 // Parse command line
 return await rootCmd.InvokeAsync(args);
 
 // Adapter for list command
-async Task ExecuteListCommand(string day)
+async Task ExecuteListCommand(string day, string part)
 {
     var dayForRunner = ConvertIdentifier(day);
+    var partForRunner = ConvertIdentifier(part);
     
     var runner = Setup();
-    await runner.ExecuteListCommand(dayForRunner);
+    await runner.ExecuteListCommand(dayForRunner, partForRunner);
 }
 
 // Adapter for run command
-async Task ExecuteRunCommand(FileInfo? inputFile, string day, string part)
+async Task ExecuteRunCommand(FileInfo? inputFile, string day, string part, string? variant)
 {
     var dayForRunner = ConvertIdentifier(day);
     var partForRunner = ConvertIdentifier(part);
+    var variantForRunner = ConvertIdentifier(variant ?? part);
 
     var runner = SetupRunVariant(inputFile);
-    await runner.ExecuteRunCommand(dayForRunner, partForRunner);
+    await runner.ExecuteRunCommand(dayForRunner, partForRunner, variantForRunner);
 }
 
-// Adapter for bench command
-async Task ExecuteBenchCommand(FileInfo? inputFile, string day, string part, double warmupTime, int warmupRounds, double sampleTime, int sampleRounds, bool disableWarmup)
+// Adapter for bench command.
+// This has too many parameters to work in the normal form
+async Task ExecuteBenchCommand(InvocationContext ctx)
 {
+    var day = ctx.ParseResult.GetValueForArgument(dayArgument);
+    var part = ctx.ParseResult.GetValueForArgument(partArgument);
+    var variant = ctx.ParseResult.GetValueForArgument(variantArgument);
+    var inputFile = ctx.ParseResult.GetValueForOption(inputOption);
+    var disableWarmup = ctx.ParseResult.GetValueForOption(disableWarmupOption);
+    var warmupTime = ctx.ParseResult.GetValueForOption(warmupTimeOption);
+    var warmupRounds = ctx.ParseResult.GetValueForOption(warmupRoundsOption);
+    var sampleTime = ctx.ParseResult.GetValueForOption(sampleTimeOption);
+    var sampleRounds = ctx.ParseResult.GetValueForOption(sampleRoundsOption);
+    
     var dayForRunner = ConvertIdentifier(day);
     var partForRunner = ConvertIdentifier(part);
-
+    var variantForRunner = ConvertIdentifier(variant ?? part);
+    
     var runner = SetupRunVariant(inputFile, builder => builder
         .ConfigureLogging(logging => logging
             .AddFilter("AdventOfCode", LogLevel.Warning)
@@ -92,25 +112,25 @@ async Task ExecuteBenchCommand(FileInfo? inputFile, string day, string part, dou
             })
         )
     );
-    await runner.ExecuteBenchCommand(dayForRunner, partForRunner);
+    await runner.ExecuteBenchCommand(dayForRunner, partForRunner, variantForRunner);
 }
 
 // Replace "all" with null
 string? ConvertIdentifier(string id) => id.Equals(AllDaysToken, StringComparison.OrdinalIgnoreCase) ? null : id;
 
 // Setup with run options applied
-Runner SetupRunVariant(FileInfo? inputFile, Action<IHostBuilder>? adapter = null) => 
+ISolutionRunner SetupRunVariant(FileInfo? inputFile, Action<IHostBuilder>? adapter = null) => 
     Setup(builder =>
     {
         adapter?.Invoke(builder);
         builder.ConfigureServices(services => services
-            .AddOptions<RunnerOptions>()
+            .AddOptions<SolutionRunnerOptions>()
             .Configure(o => o.CustomInputFile = inputFile)
         );
     });
 
 // Generic setup method
-Runner Setup(Action<IHostBuilder>? adapter = null)
+ISolutionRunner Setup(Action<IHostBuilder>? adapter = null)
 {
     var builder = Host.CreateDefaultBuilder();
 
@@ -127,12 +147,18 @@ Runner Setup(Action<IHostBuilder>? adapter = null)
     // Populate defaults
     builder.ConfigureServices(services =>
     {
-        services.TryAddSingleton<Runner>();
-        services.TryAddOptions<RunnerOptions>();
-        services.TryAddTransient<BenchmarkRunner>();
-        services.TryAddOptions<BenchmarkRunnerOptions>();
+        services.TryAddSingleton<ISolutionRegistry, SolutionRegistry>();
+        services.TryAddSingleton<ISolutionRunner, SolutionRunner>();
+        services.TryAddSingleton<IBenchmarkRunner, BenchmarkRunner>();
     });
 
+    // Put it all together
     var host = builder.Build();
-    return host.Services.GetRequiredService<Runner>();
+
+    // Populate the SolutionRegistry
+    var registry = host.Services.GetRequiredService<ISolutionRegistry>();
+    registry.AddSolutions(typeof(ISolution).Assembly);
+    
+    // Return the SolutionRunner so that command handlers can call specific entry points
+    return host.Services.GetRequiredService<ISolutionRunner>();
 }

@@ -2,6 +2,7 @@
 
 namespace AdventOfCode.Day03;
 
+[Solution("Day03", "Part1")]
 public class Day03Part1 : Day03
 {
     private readonly ILogger<Day03Part1> _logger;

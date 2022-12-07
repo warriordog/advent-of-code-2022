@@ -2,6 +2,7 @@
 
 namespace AdventOfCode.Day02;
 
+[Solution("Day02", "Part1")]
 public class Day02Part1 : Day02
 {
     /// <summary>

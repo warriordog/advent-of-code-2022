@@ -2,6 +2,7 @@
 
 namespace AdventOfCode.Day05;
 
+[Solution("Day05", "Part1")]
 public class Day05Part1 : Day05<Stack<char>>
 {
     public Day05Part1(ILogger<Day05Part1> logger): base(logger) {}

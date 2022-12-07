@@ -1,8 +1,8 @@
-﻿using System.Text;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 
 namespace AdventOfCode.Day06;
 
+[Solution("Day06", "Part2", "BitFields")]
 public class Day06Part2BitFields : ISolution
 {
     private readonly ILogger<Day06Part2BitFields> _logger;

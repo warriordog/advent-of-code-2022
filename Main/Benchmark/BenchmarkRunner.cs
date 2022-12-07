@@ -5,7 +5,12 @@ using Microsoft.Extensions.Options;
 
 namespace Main.Benchmark;
 
-public class BenchmarkRunner
+public interface IBenchmarkRunner
+{
+    BenchmarkResult ExecuteBenchmark(ISolution solution, string input);
+}
+
+public class BenchmarkRunner : IBenchmarkRunner
 {
     private readonly Stopwatch _stopwatch;
     private readonly double _minWarmupTime;
