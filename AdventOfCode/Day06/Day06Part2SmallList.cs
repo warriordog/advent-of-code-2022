@@ -3,6 +3,7 @@
 namespace AdventOfCode.Day06;
 
 [Solution("Day06", "Part2", "SmallList")]
+[InputFile("input.txt")]
 public class Day06Part2SmallList : ISolution
 {
     private readonly ILogger<Day06Part2SmallList> _logger;

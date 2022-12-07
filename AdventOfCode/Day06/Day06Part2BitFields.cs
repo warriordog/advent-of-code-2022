@@ -3,6 +3,7 @@
 namespace AdventOfCode.Day06;
 
 [Solution("Day06", "Part2", "BitFields")]
+[InputFile("input.txt")]
 public class Day06Part2BitFields : ISolution
 {
     private readonly ILogger<Day06Part2BitFields> _logger;

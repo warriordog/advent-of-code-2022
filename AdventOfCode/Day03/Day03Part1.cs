@@ -3,6 +3,9 @@
 namespace AdventOfCode.Day03;
 
 [Solution("Day03", "Part1")]
+[InputFile("input.txt", resolution: InputFileResolution.PathRelativeToSolution)]
+[InputFile("test.txt", type: InputFileType.Test, resolution: InputFileResolution.PathRelativeToSolution)]
+[InputFile("test2.txt", type: InputFileType.Test, resolution: InputFileResolution.PathRelativeToSolution)]
 public class Day03Part1 : Day03
 {
     private readonly ILogger<Day03Part1> _logger;

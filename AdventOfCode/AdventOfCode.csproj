@@ -12,4 +12,9 @@
       <PackageReference Include="PlusCollections" Version="1.1.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="Day06\input.txt" />
+      <EmbeddedResource Include="Day06\input.txt" />
+    </ItemGroup>
+
 </Project>

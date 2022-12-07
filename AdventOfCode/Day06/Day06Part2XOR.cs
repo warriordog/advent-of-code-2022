@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 namespace AdventOfCode.Day06;
 
 [Solution("Day06", "Part2", "XOR")]
+[InputFile("input.txt")]
 public class Day06Part2XOR : ISolution
 {
     private readonly ILogger<Day06Part2XOR> _logger;

@@ -1,7 +1,8 @@
-﻿using AdventOfCode;
+﻿using System.Text;
+using AdventOfCode;
 using Main.Benchmark;
 using Main.Util;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Primitives;
 
 namespace Main.Services;
 
@@ -16,42 +17,60 @@ public interface ISolutionRunner
     /// </summary>
     /// <param name="day">Optional day to filter by</param>
     /// <param name="part">Optional part to filer by</param>
-    Task ExecuteListCommand(string? day, string? part);
+    Task ExecuteListSolutionsCommand(string? day, string? part);
+
+    /// <summary>
+    /// Lists all solutions for a given day
+    /// </summary>
+    /// <param name="day">Optional day to filter by</param>
+    /// <param name="part">Optional part to filter by</param>
+    /// <param name="variant">Optional variation to filter by</param>
+    Task ExecuteListInputsCommand(string? day, string? part, string? variant);
 
     /// <summary>
     /// Runs one or more solutions
     /// </summary>
+    /// <remarks>
+    /// <see cref="input"/> and <see cref="customInput"/> are resolved to a registered <see cref="IInputFile"/> by the <see cref="InputResolver"/> service.
+    /// </remarks>
     /// <param name="day">Optional day to filter by</param>
     /// <param name="part">Optional part to filter by</param>
     /// <param name="variant">Optional variation to filter by</param>
-    Task ExecuteRunCommand(string? day, string? part, string? variant);
+    /// <param name="input">Optional input selection</param>
+    /// <param name="customInput">Optional custom input path</param>
+    Task ExecuteRunCommand(string? day, string? part, string? variant, string? input = null, string? customInput = null);
     
     /// <summary>
     /// Benchmarks one or more solutions
     /// </summary>
+    /// <remarks>
+    /// <see cref="input"/> and <see cref="customInput"/> are resolved to a registered <see cref="IInputFile"/> by the <see cref="InputResolver"/> service.
+    /// </remarks>
     /// <param name="day">Optional day to filter by</param>
     /// <param name="part">Optional part to filter by</param>
     /// <param name="variant">Optional variation to filter by</param>
-    Task ExecuteBenchCommand(string? day, string? part, string? variant);
+    /// <param name="input">Optional input selection</param>
+    /// <param name="customInput">Optional custom input path</param>
+    Task ExecuteBenchCommand(string? day, string? part, string? variant, string? input = null, string? customInput = null);
 }
 
 public class SolutionRunner : ISolutionRunner
 {
-    private readonly FileInfo? _customInputFile;
     private readonly IBenchmarkRunner _benchmarkRunner;
     private readonly IServiceProvider _serviceProvider;
     private readonly ISolutionRegistry _solutionRegistry;
+    private readonly IInputResolver _inputResolver;
 
-    public SolutionRunner(IOptions<SolutionRunnerOptions> runnerOptions, IServiceProvider serviceProvider, IBenchmarkRunner benchmarkRunner, ISolutionRegistry solutionRegistry)
+    public SolutionRunner(IServiceProvider serviceProvider, IBenchmarkRunner benchmarkRunner, ISolutionRegistry solutionRegistry, IInputResolver inputResolver)
     {
         _serviceProvider = serviceProvider;
         _benchmarkRunner = benchmarkRunner;
         _solutionRegistry = solutionRegistry;
-        _customInputFile = runnerOptions.Value.CustomInputFile;
+        _inputResolver = inputResolver;
     }
 
     // This is horrendous
-    public async Task ExecuteListCommand(string? day, string? part)
+    public async Task ExecuteListSolutionsCommand(string? day, string? part)
     {
         var days = _solutionRegistry
             .GetDaysByFilter(day)
@@ -101,11 +120,109 @@ public class SolutionRunner : ISolutionRunner
         }
     }
 
-    public async Task ExecuteRunCommand(string? day, string? part, string? variant) => await ExecuteSolutions(day, part, variant);
+    // The output is beautiful but no one will ever be able to read this.
+    // By tomorrow, "no one" will include me as well.
+    public async Task ExecuteListInputsCommand(string? day, string? part, string? variant)
+    {
+        var solutions = _solutionRegistry
+            .GetSolutionsByFilter(day, part, variant)
+            .ToList();
+        if (!solutions.Any())
+        {
+            await Console.Out.WriteLineAsync("* no results *");
+            return;
+        }
+        
+        // Load allll the inputs for meta purposes
+        var allInputs = solutions
+            .Select(sol => (
+                Solution: sol,
+                Inputs: _inputResolver.GetRegisteredInputsForSolution(sol.SolutionType)))
+            .ToList();
 
-    public async Task ExecuteBenchCommand(string? day, string? part, string? variant) => await ExecuteSolutions(day, part, variant, true);
+        // A bunch of little hacks
+        var widthOfName = allInputs.SelectMany(e => e.Inputs).Max(i => i.Name?.Length ?? 0);
+        var widthOfPath = allInputs.SelectMany(e => e.Inputs).Max(i => i.Path.Length);
+        var widthOfType = Enum.GetNames<InputFileType>().Select(name => name.Length).Max();
+        
+        // Print a section for each solution
+        foreach (var solution in solutions)
+        {
+            var solutionName = solution.IsVariant ? $"{solution.Day} {solution.Part} {solution.Variant}" : $"{solution.Day} {solution.Part}";
+            await Console.Out.WriteLineAsync($"{solutionName}:");
 
-    private async Task ExecuteSolutions(string? day, string? part, string? variant, bool isBenchmark = false)
+            var inputsForSolution = allInputs
+                .Where(e => e.Solution == solution)
+                .SelectMany(e => e.Inputs)
+                .ToList();
+            if (!inputsForSolution.Any())
+            {
+                await Console.Out.WriteLineAsync("    * no results *");
+                continue;
+            }
+            
+            // Extra solution-specific hack
+            var widthOfIndex = inputsForSolution.Count.ToString().Length;
+
+            // Print each type as a separate subsection
+            foreach (var type in Enum.GetValues<InputFileType>())
+            {
+                var inputsForType = inputsForSolution
+                    .Where(i => i.Type == type)
+                    .ToList();
+                if (!inputsForType.Any())
+                    continue;
+                
+                // Write each input in order.
+                for (var index = 0; index < inputsForType.Count; index++)
+                {
+                    var input = inputsForType[index];
+                    
+                    var sb = new StringBuilder();
+                    sb.Append("    ");
+
+                    // Write type header
+                    var typeLabel = (index == 0 ? $"{type}:" : "").PadRight(widthOfType + 1); // extra space for ":"
+                    sb.Append(typeLabel);
+                    
+                    // Path to input.
+                    // Left padding looks better in most cases because of file extensions.
+                    sb.Append(' ');
+                    sb.Append(input.Path.PadLeft(widthOfPath));
+                    
+                    if (widthOfName > 0) // Hack to include name if *any* has a name, for alignment
+                    {
+                        sb.Append(' ');
+                        var inputName = input.Name != null ? $"\"{input.Name}\"" : "";
+                        sb.Append(inputName.PadRight(widthOfName + 2)); // Name of the input + room for quotes
+                    }
+                    
+                    if (input.Description != null)
+                    {
+                        sb.Append(" - ");
+                        sb.Append(input.Description); // Description of input
+                    }
+                    
+                    // Metadata & ID number
+                    sb.Append(" [id=");
+                    sb.Append(index.ToString().PadRight(widthOfIndex)); // index / ID
+                    if (input.IsDefault)
+                        sb.Append(", default");
+                    if (input.Resolution.IsExternal())
+                        sb.Append(", external");
+                    sb.Append(']');
+
+                    await Console.Out.WriteLineAsync(sb.ToString());
+                }
+            }
+        }
+    }
+
+    public async Task ExecuteRunCommand(string? day, string? part, string? variant, string? input = null, string? customInput = null) => await ExecuteSolutions(day, part, variant, input, customInput);
+
+    public async Task ExecuteBenchCommand(string? day, string? part, string? variant, string? input = null, string? customInput = null) => await ExecuteSolutions(day, part, variant, input, customInput, true);
+
+    private async Task ExecuteSolutions(string? day, string? part, string? variant, string? selectedInput, string? customInput, bool isBenchmark = false)
     {
         var solutions = _solutionRegistry
             .GetSolutionsByFilter(day, part, variant)
@@ -119,7 +236,7 @@ public class SolutionRunner : ISolutionRunner
         
         foreach (var solutionEntry in solutions)
         {
-            var input = await LoadInputFile(solutionEntry.Day);
+            var input = await _inputResolver.LoadInputByUserSelection(solutionEntry, selectedInput, customInput);
             var solution = _serviceProvider.CreateInstance<ISolution>(solutionEntry.SolutionType);
 
             if (isBenchmark)
@@ -144,22 +261,4 @@ public class SolutionRunner : ISolutionRunner
         await Console.Out.WriteLineAsync($"    Sample took {results.TotalSampleTimeMs}ms to complete {results.TotalSampleRounds} rounds.");
         await Console.Out.WriteLineAsync($"    This solution completes in an average of {results.AverageTimeMs}ms per run.");
     }
-
-    private async Task<string> LoadInputFile(string dayKey)
-    {
-        var inputPath = _customInputFile?.FullName ?? $"AdventOfCode/{dayKey}/input.txt";
-        if (!File.Exists(inputPath))
-        {
-            await Console.Error.WriteLineAsync($"Cannot find input file at \"{inputPath}\". Did you mistype it?");
-            throw new ApplicationException($"Input file could not be found: \"{inputPath}\"");
-        }
-
-        var input = await File.ReadAllTextAsync(inputPath);
-        return input;
-    }
-}
-
-public class SolutionRunnerOptions
-{
-    public FileInfo? CustomInputFile { get; set; }
 }

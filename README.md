@@ -12,9 +12,12 @@ Feedback and questions are welcome!
   1. Open a terminal and navigate to the solution root. Please be sure to run from the solution root and not the project root or build directory. Otherwise the paths will not resolve correctly.
   2. Execute `dotnet run --configuration Release --project Main -- <command> [options]`
      * Supported commands:
-       * `list [day] [part]` - list available solutions. `day` and `part` both default to `all`.
+       * `list <what>` - list data from internal registries. `what` specifies what data to return and can be one of these options:
+         * `solutions [day] [part]` - list available solutions. `day` and `part` both default to `all`.
+         * `inputs [day] [part] [variant]` - list registered input files for a solution. `day`, `part`, and `variant` all default to `all`.
        * `run [day] [part] [variant] [options]` - run one or more solutions. `day` and `part` both default to `all`. `variant` defaults to null, which means no variants will be selected. Supports options:
-         * `[--input path_to_input]` - specify an alternate input file to use. Applies to all selected days/parts.
+         * `[--input {id | name | type}]` - select a registered input file to use. Use `list inputs` to show all options. Applies to all selected days/parts.
+         * `[--custom-input path_to_input]` - specify an custom, external input file to use. Applies to all selected days/parts.
        * `bench [day] [part] [variant] [options]` - benchmark one or more solutions. Supports same options and defaults as `run`, and additionally supports:
          * `[--min-warmup-time time_in_ms]` - set the minimum time (in milliseconds) to run warmup rounds (default 2000ms).
          * `[--min-warmup-rounds num_rounds]` - set the minimum number of warmup rounds (default 10).
@@ -33,8 +36,8 @@ Feedback and questions are welcome!
 ### Solutions
 | Day                         | Part 1                                    | Part 2                                    | Name                                                           |
 |-----------------------------|-------------------------------------------|-------------------------------------------|----------------------------------------------------------------|
-| [Day06](AdventOfCode/Day06) | [Part1](AdventOfCode/Day06/Day06Part1.cs) | [Part2](AdventOfCode/Day06/Day06Part2.cs) | [Camp Cleanup](https://adventofcode.com/2022/day/6)            |
-| [Day05](AdventOfCode/Day05) | [Part1](AdventOfCode/Day05/Day05Part1.cs) | [Part2](AdventOfCode/Day05/Day05Part2.cs) | [Camp Cleanup](https://adventofcode.com/2022/day/5)            |
+| [Day06](AdventOfCode/Day06) | [Part1](AdventOfCode/Day06/Day06Part1.cs) | [Part2](AdventOfCode/Day06/Day06Part2.cs) | [Tuning Trouble](https://adventofcode.com/2022/day/6)          |
+| [Day05](AdventOfCode/Day05) | [Part1](AdventOfCode/Day05/Day05Part1.cs) | [Part2](AdventOfCode/Day05/Day05Part2.cs) | [Supply Stacks](https://adventofcode.com/2022/day/5)           |
 | [Day04](AdventOfCode/Day04) | [Part1](AdventOfCode/Day04/Day04Part1.cs) | [Part2](AdventOfCode/Day04/Day04Part2.cs) | [Camp Cleanup](https://adventofcode.com/2022/day/4)            |
 | [Day03](AdventOfCode/Day03) | [Part1](AdventOfCode/Day03/Day03Part1.cs) | [Part2](AdventOfCode/Day03/Day03Part2.cs) | [Rucksack Reorganization](https://adventofcode.com/2022/day/3) |
 | [Day02](AdventOfCode/Day02) | [Part1](AdventOfCode/Day02/Day02Part1.cs) | [Part2](AdventOfCode/Day02/Day02Part2.cs) | [Rock Paper Scissors](https://adventofcode.com/2022/day/2)     |

@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 namespace AdventOfCode.Day01;
 
 [Solution("Day01", "Part2")]
+[InputFile("input.txt", resolution: InputFileResolution.PathRelativeToSolution)]
 public class Day01Part2 : Day01
 {
     

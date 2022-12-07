@@ -3,6 +3,7 @@
 namespace AdventOfCode.Day04;
 
 [Solution("Day04", "Part1")]
+[InputFile("input.txt", resolution: InputFileResolution.PathRelativeToSolution)]
 public class Day04Part1 : Day04
 {
     
