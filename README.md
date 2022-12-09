@@ -38,6 +38,7 @@ Feedback and questions are welcome!
 ### Solutions
 | Day                         | Part 1                                    | Part 2                                    | Name                                                           |
 |-----------------------------|-------------------------------------------|-------------------------------------------|----------------------------------------------------------------|
+| [Day09](AdventOfCode/Day09) | [Part1](AdventOfCode/Day09/Day09Part1.cs) | [Part2](AdventOfCode/Day09/Day09Part2.cs) | [Rope Bridge](https://adventofcode.com/2022/day/9)             |
 | [Day08](AdventOfCode/Day08) | [Part1](AdventOfCode/Day08/Day08Part1.cs) | [Part2](AdventOfCode/Day08/Day08Part2.cs) | [Treetop Tree House](https://adventofcode.com/2022/day/8)      |
 | [Day07](AdventOfCode/Day07) | [Part1](AdventOfCode/Day07/Day07Part1.cs) | [Part2](AdventOfCode/Day07/Day07Part2.cs) | [No Space Left On Device](https://adventofcode.com/2022/day/7) |
 | [Day06](AdventOfCode/Day06) | [Part1](AdventOfCode/Day06/Day06Part1.cs) | [Part2](AdventOfCode/Day06/Day06Part2.cs) | [Tuning Trouble](https://adventofcode.com/2022/day/6)          |

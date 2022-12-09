@@ -39,6 +39,14 @@
       <EmbeddedResource Include="Day08\test.txt" />
       <None Remove="Day08\test2.txt" />
       <EmbeddedResource Include="Day08\test2.txt" />
+      <None Remove="Day09\input.txt" />
+      <EmbeddedResource Include="Day09\input.txt" />
+      <None Remove="Day09\test.txt" />
+      <EmbeddedResource Include="Day09\test.txt" />
+      <None Remove="Day09\challenge_1m.txt" />
+      <EmbeddedResource Include="Day09\challenge_1m.txt" />
+      <None Remove="Day09\challenge_10m.txt" />
+      <EmbeddedResource Include="Day09\challenge_10m.txt" />
     </ItemGroup>
 
 </Project>
