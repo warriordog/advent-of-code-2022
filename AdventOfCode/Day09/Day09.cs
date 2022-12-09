@@ -1,21 +1,18 @@
-﻿using System.Text;
-using AdventOfCode.Common;
+﻿using AdventOfCode.Common;
 using Microsoft.Extensions.Logging;
 
 namespace AdventOfCode.Day09;
 
 public abstract class Day09 : ISolution
 {
-    private readonly bool _debug;
     private readonly ILogger _logger;
 
     private readonly int _numKnots;
     
-    protected Day09(bool debug, ILogger logger, int numKnots)
+    protected Day09(ILogger logger, int numKnots)
     {
         if (numKnots < 1) throw new ArgumentOutOfRangeException(nameof(numKnots), "There must be at least two knots");
-        
-        _debug = debug;
+
         _logger = logger;
         _numKnots = numKnots;
     }
@@ -36,15 +33,14 @@ public abstract class Day09 : ISolution
         var head = knots[0];
         var tail = knots[_numKnots - 1];
         
-        // Track number of times that tail has been in a particular position
-        var tailPositions = new Plane<int>
+        // Track number of times that the tail has been in a particular position
+        var tailPositions = new HashSet<Point>()
         {
             // Make sure we count the starting point
-            [0, 0] = 1
+            new(0, 0)
         };
 
         // Process each motion
-        var lineNum = 0;
         foreach (var line in inputLines)
         {
             // Parse line
@@ -70,105 +66,11 @@ public abstract class Day09 : ISolution
                 }
                 
                 // Track new tail position
-                tailPositions[tail.Row, tail.Col]++;
-
-                PrintStep(lineNum, step, head, tail, knots, tailPositions);
-            }
-
-            lineNum++;
-        }
-
-        // Count up visited positions
-        var totalVisited = 0;
-        var uniqueVisited = 0;
-        for (var y = tailPositions.YMin; y <= tailPositions.YMax; y++)
-        {
-            var xAxis = tailPositions[y];
-            if (xAxis == null) continue;
-            
-            for (var x = xAxis.Min; x <= xAxis.Max; x++)
-            {
-                totalVisited += xAxis[x];
-                
-                if (xAxis[x] > 0)
-                {
-                    uniqueVisited++;
-                }
+                tailPositions.Add(tail.GetPoint());
             }
         }
         
-        _logger.LogInformation("The tail visited [{unique}] unique locations a total of {total} times.", uniqueVisited, totalVisited);
-    }
-    
-    private void PrintStep(int motion, int step, Knot head, Knot tail, Knot[] knots, Plane<int> tailPositions)
-    {
-        if (!_debug) return;
-
-        var yMax = Math.Max(tailPositions.YMax, head.Row);
-        var yMin = Math.Min(tailPositions.YMax, head.Row);
-        var xMax = Math.Max(tailPositions.XMax, head.Col);
-        var xMin = Math.Min(tailPositions.XMin, head.Col);
-        
-        var sb = new StringBuilder();
-        for (var y = yMax; y >= yMin; y--)
-        {
-            for (var x = xMin; x <= xMax; x++)
-            {
-                // Head
-                if (y == head.Row && x == head.Col)
-                {
-                    sb.Append('H');
-                    continue;
-                }
-                
-                // Tail
-                if (y == tail.Row && x == tail.Col)
-                {
-                    sb.Append('T');
-                    continue;
-                }
-                
-                // Intermediate
-                var foundIntermediate = false;
-                for (var i = 1; i < knots.Length - 1; i++)
-                {
-                    var knot = knots[i];
-                    if (y == knot.Row && x == knot.Col)
-                    {
-                        sb.Append(knot.Index);
-                        foundIntermediate = true;
-                        break;
-                    }
-                }
-                if (foundIntermediate)
-                {
-                    // Please vote for this issue: https://github.com/dotnet/csharplang/discussions/6634
-                    break;
-                }
-                
-                
-                // Visited
-                if (tailPositions[y, x] > 0)
-                {
-                    sb.Append('#');
-                    continue;
-                }
-                
-                // Starting point
-                if (x == 0 && y == 0)
-                {
-                    sb.Append('s');
-                    continue;
-                }
-                
-                // Unvisited (fallback)
-                sb.Append('.');
-            }
-
-            sb.Append('\n');
-        }
-
-        _logger.LogTrace("Motion {motion} step {step} resulted in a grid from [{yMax},{xMin}] to [{yMin},{xMax}]:\n{grid}", motion, step, yMax, xMin, yMin, xMax, sb);
+        _logger.LogInformation("The tail visited [{unique}] unique locations.", tailPositions.Count);
     }
 
     private static void MoveHead(char dir, Knot head)
@@ -191,11 +93,6 @@ public abstract class Day09 : ISolution
 
         if (previous.Col > knot.Col) knot.Col++;
         if (previous.Col < knot.Col) knot.Col--;
-
-        if (_debug)
-        {
-            _logger.LogTrace("Moving knot {knot} to keep up with previous knot {previous}", knot, previous);
-        }
     }
 }
 
@@ -204,5 +101,10 @@ public record Knot(int Row, int Col, byte Index)
     public int Row { get; set; } = Row;
     public int Col { get; set; } = Col;
 
+    public Point GetPoint() => new(Row, Col);
+    
     public override string ToString() => $"{Index}@[{Row},{Col}]";
 }
+
+// ReSharper disable twice NotAccessedPositionalProperty.Global
+public readonly record struct Point(int Row, int Col);
