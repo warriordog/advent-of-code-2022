@@ -48,7 +48,7 @@ public class Day10 : ISolution
             // Draw the next pixel
             var crtPosition = (cycle - 1) % 40; // Cycles are 1-index
             var spriteIsVisible = (xRegister - 1) <= crtPosition && (xRegister + 1) >= crtPosition;
-            displayOutput.Append(spriteIsVisible ? '#' : ' ');
+            displayOutput.Append(spriteIsVisible ? '█' : ' ');
             if (crtPosition == 39)
             {
                 displayOutput.Append('\n');
