@@ -3,6 +3,8 @@ using AdventOfCode.Common;
 
 namespace AdventOfCode.Day07;
 
+[InputFile("input.txt")]
+[InputFile("test.txt", type: InputFileType.Test)]
 public abstract class Day07 : ISolution
 {
     public void Run(string inputFile)

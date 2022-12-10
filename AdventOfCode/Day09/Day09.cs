@@ -3,6 +3,10 @@ using Microsoft.Extensions.Logging;
 
 namespace AdventOfCode.Day09;
 
+[InputFile("input.txt")]
+[InputFile("test.txt", InputFileType.Test)]
+[InputFile("challenge_1m.txt", InputFileType.Challenge)]
+[InputFile("challenge_10m.txt", InputFileType.Challenge)]
 public abstract class Day09 : ISolution
 {
     private readonly ILogger _logger;

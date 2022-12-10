@@ -2,6 +2,7 @@ using AdventOfCode.Common;
 
 namespace AdventOfCode.Day01;
 
+[InputFile("input.txt")]
 public abstract class Day01 : ISolution
 {
     public void Run(string inputFile)

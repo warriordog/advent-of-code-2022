@@ -2,6 +2,9 @@
 
 namespace AdventOfCode.Day08;
 
+[InputFile("input.txt")]
+[InputFile("test.txt", InputFileType.Test)]
+[InputFile("test2.txt", InputFileType.Test)]
 public abstract class Day08 : ISolution
 {
     public void Run(string inputFile)

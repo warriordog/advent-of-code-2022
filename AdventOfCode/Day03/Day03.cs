@@ -2,6 +2,9 @@
 
 namespace AdventOfCode.Day03;
 
+[InputFile("input.txt")]
+[InputFile("test.txt", type: InputFileType.Test, name: "test", description: "Official test data from AoC")]
+[InputFile("test2.txt", type: InputFileType.Test, name: "test2", description: "Custom to test a bug in Part 2")]
 public abstract class Day03 : ISolution
 {
     public void Run(string inputFile)

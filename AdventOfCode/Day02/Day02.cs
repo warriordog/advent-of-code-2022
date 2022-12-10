@@ -2,6 +2,7 @@
 
 namespace AdventOfCode.Day02;
 
+[InputFile("input.txt")]
 public abstract class Day02 : ISolution
 {
     /// <summary>

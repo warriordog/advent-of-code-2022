@@ -2,6 +2,7 @@
 
 namespace AdventOfCode.Day04;
 
+[InputFile("input.txt")]
 public abstract class Day04 : ISolution
 {
     // TIL that carriage return is not part of the line terminator, at least for .NET Regex

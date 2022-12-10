@@ -6,7 +6,7 @@ namespace AdventOfCode;
 /// Indicates that a target class is an executable solution.
 /// Target classes must implement <see cref="ISolution"/>.
 /// </summary>
-[AttributeUsage(AttributeTargets.Class)]
+[AttributeUsage(AttributeTargets.Class, Inherited = false)]
 [BaseTypeRequired(typeof(ISolution))]
 [MeansImplicitUse(ImplicitUseKindFlags.InstantiatedNoFixedConstructorSignature, ImplicitUseTargetFlags.Itself | ImplicitUseTargetFlags.WithInheritors)]
 public sealed class SolutionAttribute : Attribute

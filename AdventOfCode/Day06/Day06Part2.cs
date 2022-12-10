@@ -3,7 +3,6 @@
 namespace AdventOfCode.Day06;
 
 [Solution("Day06", "Part2")]
-[InputFile("input.txt")]
 public class Day06Part2 : Day06
 {
     public Day06Part2(ILogger<Day06Part2> logger) : base(logger) {}

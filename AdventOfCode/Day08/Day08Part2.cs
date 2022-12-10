@@ -3,9 +3,6 @@ using Microsoft.Extensions.Logging;
 namespace AdventOfCode.Day08;
 
 [Solution("Day08", "Part2")]
-[InputFile("input.txt")]
-[InputFile("test.txt", InputFileType.Test)]
-[InputFile("test2.txt", InputFileType.Test)]
 public class Day08Part2 : Day08
 {
  

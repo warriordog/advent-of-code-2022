@@ -3,8 +3,6 @@
 namespace AdventOfCode.Day07;
 
 [Solution("Day07", "Part2")]
-[InputFile("input.txt")]
-[InputFile("test.txt", type: InputFileType.Test)]
 public class Day07Part2 : Day07
 {
     private readonly ILogger<Day07Part2> _logger;

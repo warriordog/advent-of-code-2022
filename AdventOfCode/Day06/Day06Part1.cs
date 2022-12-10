@@ -3,7 +3,6 @@
 namespace AdventOfCode.Day06;
 
 [Solution("Day06", "Part1")]
-[InputFile("input.txt")]
 public class Day06Part1 : Day06
 {
 

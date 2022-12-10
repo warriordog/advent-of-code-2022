@@ -3,8 +3,10 @@ using Microsoft.Extensions.Logging;
 
 namespace AdventOfCode.Day05;
 
+[InputFile("input.txt")]
+[InputFile("test.txt", type: InputFileType.Test)]
 public abstract class Day05<TStack> : ISolution
-where TStack : new()
+    where TStack : new()
 {
     private readonly ILogger _logger;
     protected Day05(ILogger logger) => _logger = logger;

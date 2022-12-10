@@ -2,6 +2,7 @@
 
 namespace AdventOfCode.Day06;
 
+[InputFile("input.txt")]
 public abstract class Day06 : ISolution
 {
     protected readonly ILogger Logger;
