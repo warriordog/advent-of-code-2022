@@ -38,6 +38,7 @@ Feedback and questions are welcome!
 ### Solutions
 | Day                         | Part 1                                    | Part 2                                    | Name                                                           |
 |-----------------------------|-------------------------------------------|-------------------------------------------|----------------------------------------------------------------|
+| [Day11](AdventOfCode/Day11) | [Part1](AdventOfCode/Day11/Day11Part1.cs) | [Part2](AdventOfCode/Day11/Day11Part2.cs) | [Monkey in the Middle](https://adventofcode.com/2022/day/11)   |
 | [Day10](AdventOfCode/Day10) | [Part1](AdventOfCode/Day10/Day10Part1.cs) | [Part2](AdventOfCode/Day10/Day10Part2.cs) | [Cathode-Ray Tube](https://adventofcode.com/2022/day/10)       |
 | [Day09](AdventOfCode/Day09) | [Part1](AdventOfCode/Day09/Day09Part1.cs) | [Part2](AdventOfCode/Day09/Day09Part2.cs) | [Rope Bridge](https://adventofcode.com/2022/day/9)             |
 | [Day08](AdventOfCode/Day08) | [Part1](AdventOfCode/Day08/Day08Part1.cs) | [Part2](AdventOfCode/Day08/Day08Part2.cs) | [Treetop Tree House](https://adventofcode.com/2022/day/8)      |
