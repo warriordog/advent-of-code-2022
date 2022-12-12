@@ -29,8 +29,8 @@ public abstract class Day12 : ISolution
         grid.EndingNode.Distance = 0;
         
         // Set up queue
-        var queue = new UniquePriorityQueue<Point, int>();
-        queue.Enqueue(grid.EndingPoint, 0);
+        var queue = new UniqueQueue<Point>();
+        queue.Enqueue(grid.EndingPoint);
 
         // Run search
         while (queue.Count > 0)
@@ -44,7 +44,7 @@ public abstract class Day12 : ISolution
         }
     }
     
-    private static void RunDijkstraFor(Grid grid, UniquePriorityQueue<Point, int> queue, Point point, Dir dir)
+    private static void RunDijkstraFor(Grid grid, UniqueQueue<Point> queue, Point point, Dir dir)
     {
         // Check bounds
         if (dir == Dir.Up && point.Row < 1) return;
@@ -66,7 +66,7 @@ public abstract class Day12 : ISolution
         {
             to.Distance = alt;
             to.Previous = FlipDir(dir); // Setting this on the neighbor, so it needs to point backwards
-            queue.Enqueue(toPoint, to.Distance);
+            queue.Enqueue(toPoint);
         }
     }
 
