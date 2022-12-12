@@ -12,8 +12,8 @@ public abstract class Day12 : ISolution
         // Grid contains both the input heightmap and Dijkstra state.
         var grid = ParseInput(inputFile);
 
-        // Run Dijkstra's algorithm to find paths
-        RunDijkstra(grid);
+        // Run breadth-first-search algorithm to find paths
+        RunBFS(grid);
         
         RunDay12(grid);
     }
@@ -21,30 +21,26 @@ public abstract class Day12 : ISolution
     protected abstract void RunDay12(Grid grid);
 
     
-    // We run Dijkstra in reverse, so that we can find the all the shortest paths from a -> ending point
-    private static void RunDijkstra(Grid grid)
+    // We run BFS in reverse, so that we can find the all the shortest paths from a -> ending point
+    private static void RunBFS(Grid grid)
     {
-        // Set distance for starting point.
-        // This inverts the usual algorithm with "if v != source" in order to avoid the loop.
-        grid.EndingNode.Distance = 0;
-        
-        // Set up queue
-        var queue = new UniqueQueue<Point>();
+        // Set up BFS
+        var queue = new Queue<Point>();
+        grid.EndingNode.Explored = true;
         queue.Enqueue(grid.EndingPoint);
-
-        // Run search
+        
+        // Run BFS
         while (queue.Count > 0)
         {
             var point = queue.Dequeue();
             
-            RunDijkstraFor(grid, queue, point, Dir.Up);
-            RunDijkstraFor(grid, queue, point, Dir.Right);
-            RunDijkstraFor(grid, queue, point, Dir.Down);
-            RunDijkstraFor(grid, queue, point, Dir.Left);
+            RunBFSFor(grid, queue, point, Dir.Up);
+            RunBFSFor(grid, queue, point, Dir.Right);
+            RunBFSFor(grid, queue, point, Dir.Down);
+            RunBFSFor(grid, queue, point, Dir.Left);
         }
     }
-    
-    private static void RunDijkstraFor(Grid grid, UniqueQueue<Point> queue, Point point, Dir dir)
+    private static void RunBFSFor(Grid grid, Queue<Point> queue, Point point, Dir dir)
     {
         // Check bounds
         if (dir == Dir.Up && point.Row < 1) return;
@@ -52,22 +48,19 @@ public abstract class Day12 : ISolution
         if (dir == Dir.Right && point.Col >= grid.Width - 1) return;
         if (dir == Dir.Left && point.Col < 1) return;
         
-        // Check elevation
+        // Check if explored
         var toPoint = point.GetNeighbor(dir);
         var to = grid[toPoint];
+        if (to.Explored) return;
+        
+        // Check elevation
         var from = grid[point];
         if (from.Elevation - to.Elevation > 1) return; // Since we are working from the end, we can only go DOWN one step
-            
-        // Move is valid, compute the new distance
-        var alt = from.Distance + 1; // Distance is always "one step".
-        
-        // Check if this is the new best route for neighbor
-        if (alt < to.Distance)
-        {
-            to.Distance = alt;
-            to.Previous = FlipDir(dir); // Setting this on the neighbor, so it needs to point backwards
-            queue.Enqueue(toPoint);
-        }
+
+        // Explore the node
+        to.Explored = true;
+        to.Previous = FlipDir(dir); // Setting this on the neighbor, so it needs to point backwards
+        queue.Enqueue(toPoint);
     }
 
     private static Dir FlipDir(Dir dir) => dir switch
@@ -143,7 +136,7 @@ public abstract class Day12 : ISolution
             var currentNode = grid[current];
             
             // BMake sure that we have a path
-            if (currentNode.Previous == Dir.None || currentNode.Distance == int.MaxValue)
+            if (!currentNode.Explored || currentNode.Previous == Dir.None)
                 return int.MaxValue;
 
             // Move to previous node
@@ -212,7 +205,7 @@ public class Node
 {
     public byte Elevation { get; init; }
     public Dir Previous { get; set; } = Dir.None;
-    public int Distance { get; set; } = int.MaxValue;
+    public bool Explored { get; set; } = false;
 }
 
 public record Point(int Row, int Col)
