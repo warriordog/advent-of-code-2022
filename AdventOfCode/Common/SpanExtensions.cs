@@ -18,6 +18,18 @@ public static class SpanExtensions
 
         return -1;
     }
+    
+    public static void GetGridMetadata(this ReadOnlySpan<char> input, out int rowSize, out int rowSkip)
+    {
+        // Row size == index of the first newline from the start of the input
+        rowSize = input.IndexOfAny('\r', '\n');
+        if (rowSize < 1) throw new ArgumentException("First line does not have any content", nameof(input));
+        
+        // Newline size == distance between the first newline character and the next non-newline character
+        if (input[rowSize + 1] is not '\r' or '\n') rowSkip = rowSize + 1;
+        else if (input[rowSize + 2] is not '\r' or '\n') rowSkip = rowSize + 2;
+        else throw new ArgumentException("Newline is not \\r\\n (CRLF) or \\n (LF)", nameof(input));
+    }
 
     /// <summary>
     /// Split a span into lines.

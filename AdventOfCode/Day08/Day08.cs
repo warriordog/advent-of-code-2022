@@ -14,25 +14,13 @@ public abstract class Day08 : ISolution
             .TrimEnd();
 
         // Map the input to be indexed as a grid
-        GetInputMetadata(input, out var gridSize, out var rowSkip);
+        input.GetGridMetadata(out var gridSize, out var rowSkip);
 
         RunDay8(input, gridSize, rowSkip);
     }
 
     protected abstract void RunDay8(ReadOnlySpan<char> input, int gridSize, int rowSkip);
 
-    private static void GetInputMetadata(ReadOnlySpan<char> input, out int gridSize, out int rowSkip)
-    {
-        // Grid size == index of the first newline from the start of the input
-        gridSize = input.IndexOfAny('\r', '\n');
-        if (gridSize < 1) throw new ArgumentException("First line does not have any content", nameof(input));
-        
-        // Newline size == distance between the first newline character and the next non-newline character
-        if (input[gridSize + 1] is not '\r' or '\n') rowSkip = gridSize + 1;
-        else if (input[gridSize + 2] is not '\r' or '\n') rowSkip = gridSize + 2;
-        else throw new ArgumentException("Newline is not \\r\\n (CRLF) or \\n (LF)", nameof(input));
-    }
-    
     // private int GetGridSize(ReadOnlySpan<char> input)
     // {
     //     // Grid size == index of the first newline from the start of the input
