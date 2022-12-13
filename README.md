@@ -38,6 +38,7 @@ Feedback and questions are welcome!
 ### Solutions
 | Day                         | Part 1                                    | Part 2                                    | Name                                                            |
 |-----------------------------|-------------------------------------------|-------------------------------------------|-----------------------------------------------------------------|
+| [Day13](AdventOfCode/Day13) | [Part1](AdventOfCode/Day13/Day13Part1.cs) | [Part2](AdventOfCode/Day13/Day13Part2.cs) | [Distress Signal](https://adventofcode.com/2022/day/13)         |
 | [Day12](AdventOfCode/Day12) | [Part1](AdventOfCode/Day12/Day12Part1.cs) | [Part2](AdventOfCode/Day12/Day12Part2.cs) | [Hill Climbing Algorithm](https://adventofcode.com/2022/day/12) |
 | [Day11](AdventOfCode/Day11) | [Part1](AdventOfCode/Day11/Day11Part1.cs) | [Part2](AdventOfCode/Day11/Day11Part2.cs) | [Monkey in the Middle](https://adventofcode.com/2022/day/11)    |
 | [Day10](AdventOfCode/Day10) | [Part1](AdventOfCode/Day10/Day10Part1.cs) | [Part2](AdventOfCode/Day10/Day10Part2.cs) | [Cathode-Ray Tube](https://adventofcode.com/2022/day/10)        |

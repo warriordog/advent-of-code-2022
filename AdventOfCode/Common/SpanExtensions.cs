@@ -125,6 +125,24 @@ public ref struct SpanLineSplitter
         
         return true;
     }
+
+    /// <summary>
+    /// Moves to the next token in the input, then returns it for convenience.
+    /// If there are no more tokens, then returns an empty span.
+    /// </summary>
+    /// <returns>Returns the next token in the input</returns>
+    public ReadOnlySpan<char> MoveNextAndGet()
+    {
+        // Check for end of input
+        if (!MoveNext())
+        {
+            // Maybe this should be an exception?
+            // Or use TryGet pattern?
+            return default;
+        }
+
+        return Current;
+    }
     
     public SpanLineSplitter GetEnumerator() => this;
 }
