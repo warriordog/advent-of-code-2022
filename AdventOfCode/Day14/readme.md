@@ -18,6 +18,7 @@ I really wanted to factor that out into a single check for each potential landin
 
 Some potential optimizations:
 * Faster data structure (as described above)
+  * Alternately, just hardcode the width because the slope is 1. Then we can use `Matter[height*2, height]` for efficient access.
 * Alternate search algorithm (modified BFS?)
 * Instead of picking one left/down/right branch, run ALL of them and then there's no need for the outer loop. This also reduces duplicate work.
 * Clamp search bounds to a triangle peaking at (500, 0)
