@@ -146,3 +146,5 @@ public ref struct SpanLineSplitter
     
     public SpanLineSplitter GetEnumerator() => this;
 }
+
+// TODO implement Split(ReadOnlySpan<char> input, ReadOnlySpan<char> delemiter)

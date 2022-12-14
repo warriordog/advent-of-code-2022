@@ -109,6 +109,3 @@ public record Knot(int Row, int Col, byte Index)
     
     public override string ToString() => $"{Index}@[{Row},{Col}]";
 }
-
-// ReSharper disable twice NotAccessedPositionalProperty.Global
-public readonly record struct Point(int Row, int Col);
