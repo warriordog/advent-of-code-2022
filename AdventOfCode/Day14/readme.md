@@ -15,3 +15,10 @@ if (data[point] == Matter.Air) continue;
 ```
 
 I really wanted to factor that out into a single check for each potential landing point, but I couldn't do it without either making the rest of the loop ugly or resorting to recursion.
+
+Some potential optimizations:
+* Faster data structure (as described above)
+* Alternate search algorithm (modified BFS?)
+* Instead of picking one left/down/right branch, run ALL of them and then there's no need for the outer loop. This also reduces duplicate work.
+* Clamp search bounds to a triangle peaking at (500, 0)
+* Form triangle first and ray trace in from the edges. Probably works for part 2 only.
