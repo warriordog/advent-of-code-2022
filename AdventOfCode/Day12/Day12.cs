@@ -34,19 +34,19 @@ public abstract class Day12 : ISolution
         {
             var point = queue.Dequeue();
             
-            RunBFSFor(grid, queue, point, Dir.Up);
-            RunBFSFor(grid, queue, point, Dir.Right);
-            RunBFSFor(grid, queue, point, Dir.Down);
-            RunBFSFor(grid, queue, point, Dir.Left);
+            RunBFSFor(grid, queue, point, Direction.Up);
+            RunBFSFor(grid, queue, point, Direction.Right);
+            RunBFSFor(grid, queue, point, Direction.Down);
+            RunBFSFor(grid, queue, point, Direction.Left);
         }
     }
-    private static void RunBFSFor(Grid grid, Queue<Point> queue, Point point, Dir dir)
+    private static void RunBFSFor(Grid grid, Queue<Point> queue, Point point, Direction dir)
     {
         // Check bounds
-        if (dir == Dir.Up && point.Row < 1) return;
-        if (dir == Dir.Down && point.Row >= grid.Height - 1) return;
-        if (dir == Dir.Right && point.Col >= grid.Width - 1) return;
-        if (dir == Dir.Left && point.Col < 1) return;
+        if (dir == Direction.Up && point.Row < 1) return;
+        if (dir == Direction.Down && point.Row >= grid.Height - 1) return;
+        if (dir == Direction.Right && point.Col >= grid.Width - 1) return;
+        if (dir == Direction.Left && point.Col < 1) return;
         
         // Check if explored
         var toPoint = point.GetNeighbor(dir);
@@ -63,12 +63,12 @@ public abstract class Day12 : ISolution
         queue.Enqueue(toPoint);
     }
 
-    private static Dir FlipDir(Dir dir) => dir switch
+    private static Direction FlipDir(Direction dir) => dir switch
     {
-        Dir.Up => Dir.Down,
-        Dir.Down => Dir.Up,
-        Dir.Right => Dir.Left,
-        Dir.Left => Dir.Right,
+        Direction.Up => Direction.Down,
+        Direction.Down => Direction.Up,
+        Direction.Right => Direction.Left,
+        Direction.Left => Direction.Right,
         _ => dir
     };
 
@@ -122,7 +122,7 @@ public abstract class Day12 : ISolution
             throw new ArgumentException("Input did not contain an ending point", nameof(inputFile));
         
         // Construct grid
-        return Grid.CreateFrom(rows, sp, ep);
+        return Grid.CreateFrom(rows, sp.Value, ep.Value);
     }
 
     protected static int CountDistanceToEnd(Grid grid, Point startingPoint)
@@ -136,7 +136,7 @@ public abstract class Day12 : ISolution
             var currentNode = grid[current];
             
             // BMake sure that we have a path
-            if (!currentNode.Explored || currentNode.Previous == Dir.None)
+            if (!currentNode.Explored || currentNode.Previous == Direction.None)
                 return int.MaxValue;
 
             // Move to previous node
@@ -204,30 +204,6 @@ public class Grid
 public class Node
 {
     public byte Elevation { get; init; }
-    public Dir Previous { get; set; } = Dir.None;
+    public Direction Previous { get; set; } = Direction.None;
     public bool Explored { get; set; } = false;
-}
-
-public record Point(int Row, int Col)
-{
-    public Point GetNeighbor(Dir direction) => direction switch
-    {
-        Dir.Up => this with { Row = Row - 1 },
-        Dir.Down => this with { Row = Row + 1 },
-        Dir.Right => this with { Col = Col + 1 },
-        Dir.Left => this with { Col = Col - 1 },
-        Dir.None => this,
-        _ => throw new ArgumentOutOfRangeException(nameof(direction), "Direction must be a valid value of Dir enum.")
-    };
-
-    public override string ToString() => $"({Row}, {Col})";
-}
-
-public enum Dir
-{
-    None,
-    Up,
-    Down,
-    Right,
-    Left
 }

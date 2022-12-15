@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using AdventOfCode.Common;
+using Microsoft.Extensions.Logging;
 
 namespace AdventOfCode.Day12;
 

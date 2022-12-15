@@ -16,4 +16,25 @@ public readonly record struct Point(int Row, int Col)
     /// <param name="colOffset"></param>
     /// <returns></returns>
     public Point MoveBy(int rowOffset, int colOffset) => new(Row + rowOffset, Col + colOffset);
+    
+    public Point GetNeighbor(Direction direction) => direction switch
+    {
+        Direction.Up => this with { Row = Row - 1 },
+        Direction.Down => this with { Row = Row + 1 },
+        Direction.Right => this with { Col = Col + 1 },
+        Direction.Left => this with { Col = Col - 1 },
+        Direction.None => this,
+        _ => throw new ArgumentOutOfRangeException(nameof(direction), "Direction must be a valid value of Dir enum.")
+    };
+
+    public override string ToString() => $"({Row}, {Col})";
+}
+
+public enum Direction
+{
+    None,
+    Up,
+    Down,
+    Right,
+    Left
 }
