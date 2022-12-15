@@ -7,7 +7,7 @@
 /// </summary>
 /// <param name="Row">Y position, starting at zero and increasing downward from the top-left corner.</param>
 /// <param name="Col">X position, starting at zero and increasing right from the top-left corner.</param>
-public readonly record struct Point(int Row, int Col)
+public readonly record struct Point(long Row, long Col)
 {
     /// <summary>
     /// Returns a new point that is equal to this point moved by the specified number of positions in either axis.
@@ -15,7 +15,7 @@ public readonly record struct Point(int Row, int Col)
     /// <param name="rowOffset"></param>
     /// <param name="colOffset"></param>
     /// <returns></returns>
-    public Point MoveBy(int rowOffset, int colOffset) => new(Row + rowOffset, Col + colOffset);
+    public Point MoveBy(long rowOffset, long colOffset) => new(Row + rowOffset, Col + colOffset);
     
     public Point GetNeighbor(Direction direction) => direction switch
     {

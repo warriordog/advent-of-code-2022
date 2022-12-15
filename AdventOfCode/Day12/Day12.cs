@@ -150,8 +150,8 @@ public abstract class Day12 : ISolution
 
 public class Grid
 {
-    public int Width { get; }
-    public int Height { get; }
+    public long Width { get; }
+    public long Height { get; }
     
     public Point StartingPoint { get; }
     public Node StartingNode { get; }
@@ -161,7 +161,7 @@ public class Grid
     
     private readonly Node[,] _data;
 
-    public Grid(Node[,] data, int width, int height, Point startingPoint, Point endingPoint)
+    public Grid(Node[,] data, long width, long height, Point startingPoint, Point endingPoint)
     {
         _data = data;
         Width = width;
@@ -178,7 +178,7 @@ public class Grid
         set => this[p.Row, p.Col] = value;
     }
 
-    public Node this[int row, int col]
+    public Node this[long row, long col]
     {
         get => _data[row, col];
         set => _data[row, col] = value;

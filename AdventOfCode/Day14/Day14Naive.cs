@@ -127,11 +127,11 @@ public abstract class Day14Naive : Day14<NaiveScanData>
 public class NaiveScanData
 {
     private readonly Dictionary<Point, Matter> _pointContents = new();
-    private int _rowMin; // This one starts at zero
-    private int _rowMax = int.MinValue;
-    private int _colMin = int.MaxValue;
-    private int _colMax = int.MinValue;
-    private int EffectiveRowMax => _hasFloor ? _rowMax + 2 : _rowMax;
+    private long _rowMin; // This one starts at zero
+    private long _rowMax = long.MinValue;
+    private long _colMin = long.MaxValue;
+    private long _colMax = long.MinValue;
+    private long EffectiveRowMax => _hasFloor ? _rowMax + 2 : _rowMax;
     
     private readonly bool _hasFloor;
     public NaiveScanData(bool hasFloor) => _hasFloor = hasFloor;

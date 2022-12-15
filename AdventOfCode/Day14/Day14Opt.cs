@@ -105,11 +105,11 @@ public abstract class Day14Opt : Day14<OptimizedScanData>
 public class OptimizedScanData
 {
     private readonly Matter[,] _matter;
-    private readonly int _rowMax;
-    private readonly int _colMin;
-    private readonly int _colMax;
+    private readonly long _rowMax;
+    private readonly long _colMin;
+    private readonly long _colMax;
     
-    public OptimizedScanData(int rowMax, int colMin, int colMax)
+    public OptimizedScanData(long rowMax, long colMin, long colMax)
     {
         _colMin = colMin;
         _colMax = colMax;
@@ -123,7 +123,7 @@ public class OptimizedScanData
         set => this[point.Row, point.Col] = value;
     }
     
-    public Matter this[int row, int col]
+    public Matter this[long row, long col]
     {
         get
         {
@@ -150,7 +150,7 @@ public class OptimizedScanData
         }
     }
 
-    private bool IsInBounds(int row, int col) =>
+    private bool IsInBounds(long row, long col) =>
         row >= 0 &&
         row <= _rowMax &&
         col >= _colMin &&
