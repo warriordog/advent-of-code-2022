@@ -41,28 +41,20 @@ public class SensorGrid
 {
     public Sensor[] Sensors { get; }
     
-    // Upper bound of *values*, not physical position. This is the bottom-right corner.
-    public Point UpperBound { get; }
-    
-    // Lower bound of *values*, not physical position. This is the top-left corner.
-    public Point LowerBound { get; }
+    public Point[] Beacons { get; }
     
     public SensorGrid(Sensor[] sensors)
     {
         Sensors = sensors;
-
-        var allPoints = sensors
-            .Select(s => s.Position)
-            .Concat(sensors
-                .Select(s => s.Beacon))
-            .ToList();
-        var minRow = allPoints.Min(p => p.Row);
-        var maxRow = allPoints.Max(p => p.Row);
-        var minCol = allPoints.Min(p => p.Col);
-        var maxCol = allPoints.Max(p => p.Col);
-        UpperBound = new Point(maxRow, maxCol);
-        LowerBound = new Point(minRow, minCol);
+        Beacons = sensors
+            .Select(s => s.Beacon)
+            .Distinct() // Only count each beacon once!!!!!!!!!!!!!!!!!
+            .ToArray();
     }
+
+    public CompoundHLine GetPositionsThatCannotContainABeacon(long row) => Sensors
+        .Aggregate(new CompoundHLine(), (line, s) =>
+            line + s.GetLineForRow(row));
 }
 
 public class Sensor
@@ -96,7 +88,6 @@ public class Sensor
         var end = Position.Col + distInvert;
         return new HLine(start, end);
     }
-        
 }
 
 public class CompoundHLine
@@ -126,17 +117,6 @@ public class CompoundHLine
         {
             return;
         }
-        
-        /*
-         * Expected:
-         *  7, 8 -> ( 2 - 14) // Possibly a step too far right?
-         *  0, 2 -> (-2 -  2)
-         * 14,20 -> (16 - 24)
-         *  7,16 -> (14 - 18)
-         * 11, 0 -> (-2 -  2) // will be skipped - fully contained
-         * 14,12 -> (12 - 12) // will be skipped - fully contained
-         * Final -> (-2 - 24)
-         */
 
         // Otherwise we ned to merge in.
         var newSegments = new List<HLine>();
@@ -183,6 +163,35 @@ public class CompoundHLine
         
         // Update segments
         _segments = newSegments;
+    }
+
+    public CompoundHLine Clamp(long min, long max)
+    {
+        int removeIdx;
+        
+        // Remove any past the max
+        while ((removeIdx = _segments.FindLastIndex(s => s.Start >= max)) > -1)
+        {
+            _segments.RemoveAt(removeIdx);
+        }
+        
+        // Remove any before the min
+        while ((removeIdx = _segments.FindIndex(s => s.End <= min)) > -1)
+        {
+            _segments.RemoveAt(removeIdx);
+        }
+
+        if (_segments.Count > 0)
+        {
+            // Extend the new end to the max
+            _segments[^1] = _segments[^1] with { End = max };
+
+            // Extend the new start to the min
+            _segments[0] = _segments[0] with { Start = min };
+        }
+
+        // Return itself for chaining
+        return this;
     }
 
     public static CompoundHLine operator +(CompoundHLine compound, HLine line)
