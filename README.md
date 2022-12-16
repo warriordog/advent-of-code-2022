@@ -36,22 +36,23 @@ Feedback and questions are welcome!
        * `command` - if set, shows detailed help about a specific command.
 
 ### Solutions
-| Day                         | Part 1                                    | Part 2                                    | Name                                                            |
-|-----------------------------|-------------------------------------------|-------------------------------------------|-----------------------------------------------------------------|
-| [Day14](AdventOfCode/Day14) | [Part1](AdventOfCode/Day14/Day14Part1.cs) | [Part2](AdventOfCode/Day14/Day14Part2.cs) | [Regolith Reservoir](https://adventofcode.com/2022/day/14)      |
-| [Day13](AdventOfCode/Day13) | [Part1](AdventOfCode/Day13/Day13Part1.cs) | [Part2](AdventOfCode/Day13/Day13Part2.cs) | [Distress Signal](https://adventofcode.com/2022/day/13)         |
-| [Day12](AdventOfCode/Day12) | [Part1](AdventOfCode/Day12/Day12Part1.cs) | [Part2](AdventOfCode/Day12/Day12Part2.cs) | [Hill Climbing Algorithm](https://adventofcode.com/2022/day/12) |
-| [Day11](AdventOfCode/Day11) | [Part1](AdventOfCode/Day11/Day11Part1.cs) | [Part2](AdventOfCode/Day11/Day11Part2.cs) | [Monkey in the Middle](https://adventofcode.com/2022/day/11)    |
-| [Day10](AdventOfCode/Day10) | [Part1](AdventOfCode/Day10/Day10Part1.cs) | [Part2](AdventOfCode/Day10/Day10Part2.cs) | [Cathode-Ray Tube](https://adventofcode.com/2022/day/10)        |
-| [Day09](AdventOfCode/Day09) | [Part1](AdventOfCode/Day09/Day09Part1.cs) | [Part2](AdventOfCode/Day09/Day09Part2.cs) | [Rope Bridge](https://adventofcode.com/2022/day/9)              |
-| [Day08](AdventOfCode/Day08) | [Part1](AdventOfCode/Day08/Day08Part1.cs) | [Part2](AdventOfCode/Day08/Day08Part2.cs) | [Treetop Tree House](https://adventofcode.com/2022/day/8)       |
-| [Day07](AdventOfCode/Day07) | [Part1](AdventOfCode/Day07/Day07Part1.cs) | [Part2](AdventOfCode/Day07/Day07Part2.cs) | [No Space Left On Device](https://adventofcode.com/2022/day/7)  |
-| [Day06](AdventOfCode/Day06) | [Part1](AdventOfCode/Day06/Day06Part1.cs) | [Part2](AdventOfCode/Day06/Day06Part2.cs) | [Tuning Trouble](https://adventofcode.com/2022/day/6)           |
-| [Day05](AdventOfCode/Day05) | [Part1](AdventOfCode/Day05/Day05Part1.cs) | [Part2](AdventOfCode/Day05/Day05Part2.cs) | [Supply Stacks](https://adventofcode.com/2022/day/5)            |
-| [Day04](AdventOfCode/Day04) | [Part1](AdventOfCode/Day04/Day04Part1.cs) | [Part2](AdventOfCode/Day04/Day04Part2.cs) | [Camp Cleanup](https://adventofcode.com/2022/day/4)             |
-| [Day03](AdventOfCode/Day03) | [Part1](AdventOfCode/Day03/Day03Part1.cs) | [Part2](AdventOfCode/Day03/Day03Part2.cs) | [Rucksack Reorganization](https://adventofcode.com/2022/day/3)  |
-| [Day02](AdventOfCode/Day02) | [Part1](AdventOfCode/Day02/Day02Part1.cs) | [Part2](AdventOfCode/Day02/Day02Part2.cs) | [Rock Paper Scissors](https://adventofcode.com/2022/day/2)      |
-| [Day01](AdventOfCode/Day01) | [Part1](AdventOfCode/Day01/Day01Part1.cs) | [Part2](AdventOfCode/Day01/Day01Part2.cs) | [Calorie Counting](https://adventofcode.com/2022/day/1)         |
+| Day                         | Part 1                                         | Part 2                                         | Name                                                            |
+|-----------------------------|------------------------------------------------|------------------------------------------------|-----------------------------------------------------------------|
+| [Day15](AdventOfCode/Day15) | [Part1](AdventOfCode/Day15/Day15Part1.cs)      | [Part2](AdventOfCode/Day15/Day15Part2.cs)      | [Beacon Exclusion Zone](https://adventofcode.com/2022/day/15)   |
+| [Day14](AdventOfCode/Day14) | [Part1](AdventOfCode/Day14/Day14NaivePart1.cs) | [Part2](AdventOfCode/Day14/Day14NaivePart2.cs) | [Regolith Reservoir](https://adventofcode.com/2022/day/14)      |
+| [Day13](AdventOfCode/Day13) | [Part1](AdventOfCode/Day13/Day13Part1.cs)      | [Part2](AdventOfCode/Day13/Day13Part2.cs)      | [Distress Signal](https://adventofcode.com/2022/day/13)         |
+| [Day12](AdventOfCode/Day12) | [Part1](AdventOfCode/Day12/Day12Part1.cs)      | [Part2](AdventOfCode/Day12/Day12Part2.cs)      | [Hill Climbing Algorithm](https://adventofcode.com/2022/day/12) |
+| [Day11](AdventOfCode/Day11) | [Part1](AdventOfCode/Day11/Day11Part1.cs)      | [Part2](AdventOfCode/Day11/Day11Part2.cs)      | [Monkey in the Middle](https://adventofcode.com/2022/day/11)    |
+| [Day10](AdventOfCode/Day10) | [Part1](AdventOfCode/Day10/Day10Part1.cs)      | [Part2](AdventOfCode/Day10/Day10Part2.cs)      | [Cathode-Ray Tube](https://adventofcode.com/2022/day/10)        |
+| [Day09](AdventOfCode/Day09) | [Part1](AdventOfCode/Day09/Day09Part1.cs)      | [Part2](AdventOfCode/Day09/Day09Part2.cs)      | [Rope Bridge](https://adventofcode.com/2022/day/9)              |
+| [Day08](AdventOfCode/Day08) | [Part1](AdventOfCode/Day08/Day08Part1.cs)      | [Part2](AdventOfCode/Day08/Day08Part2.cs)      | [Treetop Tree House](https://adventofcode.com/2022/day/8)       |
+| [Day07](AdventOfCode/Day07) | [Part1](AdventOfCode/Day07/Day07Part1.cs)      | [Part2](AdventOfCode/Day07/Day07Part2.cs)      | [No Space Left On Device](https://adventofcode.com/2022/day/7)  |
+| [Day06](AdventOfCode/Day06) | [Part1](AdventOfCode/Day06/Day06Part1.cs)      | [Part2](AdventOfCode/Day06/Day06Part2.cs)      | [Tuning Trouble](https://adventofcode.com/2022/day/6)           |
+| [Day05](AdventOfCode/Day05) | [Part1](AdventOfCode/Day05/Day05Part1.cs)      | [Part2](AdventOfCode/Day05/Day05Part2.cs)      | [Supply Stacks](https://adventofcode.com/2022/day/5)            |
+| [Day04](AdventOfCode/Day04) | [Part1](AdventOfCode/Day04/Day04Part1.cs)      | [Part2](AdventOfCode/Day04/Day04Part2.cs)      | [Camp Cleanup](https://adventofcode.com/2022/day/4)             |
+| [Day03](AdventOfCode/Day03) | [Part1](AdventOfCode/Day03/Day03Part1.cs)      | [Part2](AdventOfCode/Day03/Day03Part2.cs)      | [Rucksack Reorganization](https://adventofcode.com/2022/day/3)  |
+| [Day02](AdventOfCode/Day02) | [Part1](AdventOfCode/Day02/Day02Part1.cs)      | [Part2](AdventOfCode/Day02/Day02Part2.cs)      | [Rock Paper Scissors](https://adventofcode.com/2022/day/2)      |
+| [Day01](AdventOfCode/Day01) | [Part1](AdventOfCode/Day01/Day01Part1.cs)      | [Part2](AdventOfCode/Day01/Day01Part2.cs)      | [Calorie Counting](https://adventofcode.com/2022/day/1)         |
 
 ### Details
 * Dotnet 6 is required to run the solutions.
