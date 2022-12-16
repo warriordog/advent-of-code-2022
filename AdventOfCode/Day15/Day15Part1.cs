@@ -9,7 +9,9 @@ public class Day15Part1 : Day15
     private const int TargetRow = 2000000;
     
     private readonly ILogger<Day15Part1> _logger;
-    public Day15Part1(ILogger<Day15Part1> logger) => _logger = logger;
+    public Day15Part1(ILogger<Day15Part1> logger)
+        : base(long.MinValue, long.MaxValue)
+    => _logger = logger;
     
     protected override void RunDay15(SensorGrid grid)
     {
@@ -18,6 +20,6 @@ public class Day15Part1 : Day15
         var rowLine = grid.GetPositionsThatCannotContainABeacon(TargetRow);
         var usedOnRow = rowLine.Area - beaconsOnRow;
         
-        _logger.LogInformation("In row {TargetRow}, there are {usedOnRow} positions that cannot contain a beacon.", TargetRow, usedOnRow);
+        _logger.LogInformation("In row {TargetRow}, there are [{usedOnRow}] positions that cannot contain a beacon.", TargetRow, usedOnRow);
     }
 }

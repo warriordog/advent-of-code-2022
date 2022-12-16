@@ -9,6 +9,15 @@ public abstract class Day15 : ISolution
 {
     private static readonly Regex ParseRegex = new(@"Sensor at x=([-\d]+), y=([-\d]+): closest beacon is at x=([-\d]+), y=([-\d]+)", RegexOptions.Compiled);
     
+    private readonly long _min;
+    private readonly long _max;
+    
+    protected Day15(long min, long max)
+    {
+        _min = min;
+        _max = max;
+    }
+
     public void Run(string inputFile)
     {
         // Not bothering with Spans today...
@@ -29,7 +38,7 @@ public abstract class Day15 : ISolution
             .ToArray();
 
         // Extract metadata and construct grid
-        var sensorGrid = new SensorGrid(sensors);
+        var sensorGrid = new SensorGrid(sensors, _min, _max);
         
         RunDay15(sensorGrid);
     }
@@ -42,10 +51,15 @@ public class SensorGrid
     public Sensor[] Sensors { get; }
     
     public Point[] Beacons { get; }
+
+    private readonly long _min;
+    private readonly long _max;
     
-    public SensorGrid(Sensor[] sensors)
+    public SensorGrid(Sensor[] sensors, long min, long max)
     {
         Sensors = sensors;
+        _min = min;
+        _max = max;
         Beacons = sensors
             .Select(s => s.Beacon)
             .Distinct() // Only count each beacon once!!!!!!!!!!!!!!!!!
@@ -53,7 +67,7 @@ public class SensorGrid
     }
 
     public CompoundHLine GetPositionsThatCannotContainABeacon(long row) => Sensors
-        .Aggregate(new CompoundHLine(), (line, s) =>
+        .Aggregate(new CompoundHLine(_min, _max), (line, s) =>
             line + s.GetLineForRow(row));
 }
 
@@ -94,17 +108,27 @@ public class CompoundHLine
 {
     public IReadOnlyList<HLine> Segments => _segments;
     private List<HLine> _segments = new();
-
     public long Area => _segments.Aggregate(0L, (sum, seg) => sum + seg.Area);
+
+    private readonly long _min;
+    private readonly long _max;
+    
+    public CompoundHLine(long min, long max)
+    {
+        _min = min;
+        _max = max;
+    }
 
     public void AddLine(HLine line)
     {
         // If new line is empty, then ignore
         if (line.Distance < 1)
-        {
             return;
-        }
-        
+
+        // If new line is out of range, then ignore
+        if (line.End < _min || line.Start > _max)
+            return;
+
         // If the compound is empty, then just add and return
         if (!_segments.Any())
         {
@@ -114,11 +138,15 @@ public class CompoundHLine
         
         // If new line is fully inside an existing line, then skip it entirely.
         if (_segments.Any(seg => seg.Start <= line.Start && seg.End >= line.End))
-        {
             return;
-        }
-
+        
         // Otherwise we ned to merge in.
+        // First clamp the new line to the range.
+        var newStart = Math.Max(line.Start, _min);
+        var newEnd = Math.Min(line.End, _max);
+        line = new HLine(newStart, newEnd);
+        
+        // Copy, delete, or merge all existing segments with the new line
         var newSegments = new List<HLine>();
         foreach (var segment in _segments)
         {
@@ -163,35 +191,6 @@ public class CompoundHLine
         
         // Update segments
         _segments = newSegments;
-    }
-
-    public CompoundHLine Clamp(long min, long max)
-    {
-        int removeIdx;
-        
-        // Remove any past the max
-        while ((removeIdx = _segments.FindLastIndex(s => s.Start >= max)) > -1)
-        {
-            _segments.RemoveAt(removeIdx);
-        }
-        
-        // Remove any before the min
-        while ((removeIdx = _segments.FindIndex(s => s.End <= min)) > -1)
-        {
-            _segments.RemoveAt(removeIdx);
-        }
-
-        if (_segments.Count > 0)
-        {
-            // Extend the new end to the max
-            _segments[^1] = _segments[^1] with { End = max };
-
-            // Extend the new start to the min
-            _segments[0] = _segments[0] with { Start = min };
-        }
-
-        // Return itself for chaining
-        return this;
     }
 
     public static CompoundHLine operator +(CompoundHLine compound, HLine line)

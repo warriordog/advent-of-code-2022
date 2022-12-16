@@ -10,7 +10,9 @@ public class Day15Part2 : Day15
     private const long TuningMultiplier = 4000000L;
     
     private readonly ILogger<Day15Part2> _logger;
-    public Day15Part2(ILogger<Day15Part2> logger) => _logger = logger;
+    public Day15Part2(ILogger<Day15Part2> logger)
+        : base(0L, MaxCoordinate)
+    => _logger = logger;
     
     protected override void RunDay15(SensorGrid grid)
     {
@@ -24,9 +26,7 @@ public class Day15Part2 : Day15
         // Brute force each Y coordinate
         for (var row = 0; row <= MaxCoordinate; row++)
         {
-            var rowLine = grid
-                .GetPositionsThatCannotContainABeacon(row)
-                .Clamp(0, MaxCoordinate);
+            var rowLine = grid.GetPositionsThatCannotContainABeacon(row);
 
             // There's only one possible space, so if we find any gap then that's the correct spot
             if (rowLine.Area == MaxCoordinate) // amount will be EQUAL because start/end are inclusive!
