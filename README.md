@@ -38,6 +38,7 @@ Feedback and questions are welcome!
 ### Solutions
 | Day                         | Part 1                                         | Part 2                                         | Name                                                            |
 |-----------------------------|------------------------------------------------|------------------------------------------------|-----------------------------------------------------------------|
+| [Day16](AdventOfCode/Day16) | [Part1](AdventOfCode/Day16/Day16Part1.cs)      | *incomplete*                                   | [Proboscidea Volcanium](https://adventofcode.com/2022/day/16)   |
 | [Day15](AdventOfCode/Day15) | [Part1](AdventOfCode/Day15/Day15Part1.cs)      | [Part2](AdventOfCode/Day15/Day15Part2.cs)      | [Beacon Exclusion Zone](https://adventofcode.com/2022/day/15)   |
 | [Day14](AdventOfCode/Day14) | [Part1](AdventOfCode/Day14/Day14NaivePart1.cs) | [Part2](AdventOfCode/Day14/Day14NaivePart2.cs) | [Regolith Reservoir](https://adventofcode.com/2022/day/14)      |
 | [Day13](AdventOfCode/Day13) | [Part1](AdventOfCode/Day13/Day13Part1.cs)      | [Part2](AdventOfCode/Day13/Day13Part2.cs)      | [Distress Signal](https://adventofcode.com/2022/day/13)         |
