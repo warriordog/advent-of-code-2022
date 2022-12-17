@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Text;
 
 namespace AdventOfCode.Day16;
 
@@ -10,9 +9,6 @@ public class Path
     public int MinFlow { get; private set; }
     public int MaxFlow { get; private set; }
     public Valve Position { get; private set; }
-
-    public IReadOnlyList<Move> Moves => _moves;
-    private readonly List<Move> _moves = new();
     
     public bool[] ValveStatuses { get; }
 
@@ -22,14 +18,13 @@ public class Path
         ValveStatuses = new bool[numValves];
     }
 
-    private Path(Valve position, bool[] valveStatuses, int timeUsed, int minFlow, int maxFlow, List<Move> moves)
+    private Path(Valve position, bool[] valveStatuses, int timeUsed, int minFlow, int maxFlow)
     {
         Position = position;
         ValveStatuses = valveStatuses;
         TimeUsed = timeUsed;
         MinFlow = minFlow;
         MaxFlow = maxFlow;
-        _moves = moves;
     }
 
     public Path Clone()
@@ -37,9 +32,7 @@ public class Path
         var statusClone = new bool[ValveStatuses.Length];
         Array.Copy(ValveStatuses, statusClone, ValveStatuses.Length);
 
-        var movesClone = new List<Move>(_moves);
-
-        return new Path(Position, statusClone, TimeUsed, MinFlow, MaxFlow, movesClone);
+        return new Path(Position, statusClone, TimeUsed, MinFlow, MaxFlow);
     }
 
     public void Terminate()
@@ -48,84 +41,6 @@ public class Path
         MaxFlow = MinFlow;
     }
 
-    public StringBuilder TracePath(Valve[] valves)
-    {
-        var sb = new StringBuilder();
-
-        var openValves = new List<int>();
-
-        void PrintOpenValves()
-        {
-            if (openValves.Count == 0)
-            {
-                sb.Append("No valves are open.\n");
-                return;
-            }
-
-            if (openValves.Count == 1)
-            {
-                sb.Append("Valve ");
-                sb.Append(valves[openValves[0]]);
-                sb.Append(" is ");
-            }
-            else
-            {
-                sb.Append("Valves ");
-                if (openValves.Count == 2)
-                {
-                    sb.Append(valves[openValves[0]]);
-                    sb.Append(" and ");
-                    sb.Append(valves[openValves[1]]);
-                }
-                else
-                {
-                    for (var i = 0; i < openValves.Count; i++)
-                    {
-                        if (i > 0)
-                            sb.Append(", ");
-                        if (i == openValves.Count - 1)
-                            sb.Append("and ");
-                        sb.Append(valves[openValves[i]]);
-                    }
-                }
-                sb.Append(" are ");
-            }
-
-            sb.Append("open, releasing ");
-            sb.Append(openValves.Aggregate(0, (sum, i) => sum + valves[i].FlowRate));
-            sb.Append(" pressure.\n");
-        }
-        
-        var minute = 0;
-        foreach (var move in _moves)
-        {
-            minute++;
-            sb.Append("== Minute ");
-            sb.Append(minute);
-            sb.Append(" ==\n");
-            PrintOpenValves();
-            sb.Append("You move to valve ");
-            sb.Append(valves[move.ValveIndex].ID);
-            sb.Append(".\n\n");
-
-            if (move.OpenValve)
-            {
-                minute++;
-                sb.Append("== Minute ");
-                sb.Append(minute);
-                sb.Append(" ==\n");
-                PrintOpenValves();
-                sb.Append("You open valve ");
-                sb.Append(valves[move.ValveIndex].ID);
-                sb.Append(".\n\n");
-                
-                openValves.Add(move.ValveIndex);
-            }
-        }
-        
-        return sb;
-    }
-    
     public void MakeMove(Valve[] valves, Move move)
     {
         Debug.Assert(TimeUsed < 30, "Cannot make a move - this path as out of time");
@@ -134,7 +49,6 @@ public class Path
         // Update path
         var valve = valves[move.ValveIndex];
         Position = valve;
-        _moves.Add(move);
      
         // All movements take one minute
         TimeUsed++;
